@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import com.alx.etx.Coordination;
+import com.alx.etx.Participant;
 
 /**
  * An coordination.
@@ -28,7 +29,7 @@ public class CoordinationEntity extends Coordination {
 	public void start() {
 		setState(RUNNING);
 		setStartTime(new Date());
-		setParticipants(new ArrayList<ParticipantEntity>());
+		setParticipants(new ArrayList<Participant>());
 	}
 	
 }

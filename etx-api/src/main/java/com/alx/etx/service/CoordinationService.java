@@ -1,6 +1,5 @@
 package com.alx.etx.service;
 
-import javax.ws.rs.POST;
 
 /**
  * Proxy interface for the coordination services.
@@ -14,7 +13,6 @@ public interface CoordinationService {
 	 * 
 	 * @return the coordination id;
 	 */
-	@POST
 	String start();
 	
 }

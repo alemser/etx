@@ -1,5 +1,7 @@
 package com.alx.etx.repository;
 
+import com.alx.etx.Coordination;
+
 /**
  * Repository for keep track of the coordinations.
  * 
@@ -14,4 +16,26 @@ public interface Repository {
 	 */
 	String initCoordination();
 	
+	/**
+	 * Join an participant into an coordination.
+	 * @param coordinationId the coordination id.
+	 * @param participantName the participant name.
+	 * @return the created participant id.
+	 */
+	String join(String coordinationId, String participantName);
+
+	/**
+	 * Return an existing coordination.
+	 * @param coordId the coordination id.
+	 * @return the coordination.
+	 */
+	Coordination getCoordination(String coordId);
+
+	/**
+	 * Set the participant state.
+	 * 
+	 * @param coordinationId the coordination id.
+	 * @param participantId the participant id.
+	 */
+	void setParticipantState(String coordinationId, String participantId, int state);
 }

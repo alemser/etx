@@ -1,10 +1,13 @@
 package com.alx.etx;
 
 import java.io.Serializable;
+import java.util.Date;
+
+import javax.xml.bind.annotation.XmlTransient;
 
 public class Participant implements Serializable {
 
-	public static final int CREATED = 0;
+	public static final int JOINED = 0;
 	public static final int EXECUTED = 1;
 	public static final int CONFIRMED = 2;
 	public static final int CANCELLED = 3;
@@ -12,10 +15,16 @@ public class Participant implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private String id;
+	private String name;
+	private Date joinTime;
+	private Date executeTime;
+	private Date confirmTime;
+	private Date cancelTime;
 	private int state;
 
 	public Participant() {
-		this.state = CREATED;
+		this.state = JOINED;
+		this.joinTime = new Date();
 	}
 	
 	public Participant(String id) {
@@ -39,5 +48,59 @@ public class Participant implements Serializable {
 		this.state = state;
 	}
 
+	@XmlTransient
+	public String getStateDescription() {
+		switch (getState()) {
+		case JOINED:
+			return "created";
+		case EXECUTED:
+			return "executed";
+		case CONFIRMED:
+			return "confirmed";
+		case CANCELLED:
+			return "cancelled";
+		default:
+			return "undefined";
+		}
+	}
 
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Date getJoinTime() {
+		return joinTime;
+	}
+
+	public void setJoinTime(Date joinTime) {
+		this.joinTime = joinTime;
+	}
+
+	public Date getExecuteTime() {
+		return executeTime;
+	}
+
+	public void setExecuteTime(Date executeTime) {
+		this.executeTime = executeTime;
+	}
+
+	public Date getConfirmTime() {
+		return confirmTime;
+	}
+
+	public void setConfirmTime(Date confirmTime) {
+		this.confirmTime = confirmTime;
+	}
+
+	public Date getCancelTime() {
+		return cancelTime;
+	}
+
+	public void setCancelTime(Date cancelTime) {
+		this.cancelTime = cancelTime;
+	}
 }

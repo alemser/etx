@@ -1,13 +1,14 @@
 package com.alx.etx.service;
 
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import com.alx.etx.Coordination;
-import com.alx.etx.model.CoordinationEntity;
 import com.alx.etx.repository.MemoryRepository;
 import com.alx.etx.repository.Repository;
 
@@ -24,16 +25,29 @@ public class CoordinationServiceImpl implements CoordinationService {
 		return getRepository().initCoordination();
 	}
 	
+	@POST
+	@Path("join")
+	public String join(@FormParam("cid") String coordinationId, @FormParam("pname") String participantName) {
+		return getRepository().join(coordinationId, participantName);
+	}
+	
+	@POST
+	@Path("partState")
+	public void partState(@FormParam("cid") String coordinationId, @FormParam("pid") String participantId, @FormParam("st") int state) {
+		getRepository().setParticipantState(coordinationId, participantId, state);
+	}
+	
 	@GET
 	@Path("{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Coordination getCoordination(@PathParam("id") String id) {
-		CoordinationEntity c = new CoordinationEntity();
-		c.setId(id);
-		c.start();
-		return c;
+		return getRepository().getCoordination(id);
 	}
 	
+	/**
+	 * Return the coordination repository.
+	 * @return the repository.
+	 */
 	protected Repository getRepository() {
 		return new MemoryRepository();
 	}
