@@ -1,0 +1,57 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>etx-web</artifactId>
+	<packaging>war</packaging>
+	<name>Webapp for REST transactions</name>
+	<url>http://maven.apache.org</url>
+
+	<parent>
+		<groupId>com.alx</groupId>
+		<artifactId>etx</artifactId>
+		<version>1.0.0</version>
+	</parent>
+
+	<properties>
+		<org.eclipse.jetty.version>9.2.0.v20140526</org.eclipse.jetty.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.alx</groupId>
+			<artifactId>etx-impl</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-servlet-initializer</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-server</artifactId>
+			<version>${org.eclipse.jetty.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-webapp</artifactId>
+			<version>${org.eclipse.jetty.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-annotations</artifactId>
+			<version>${org.eclipse.jetty.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<finalName>etx-web</finalName>
+	</build>
+
+</project>
