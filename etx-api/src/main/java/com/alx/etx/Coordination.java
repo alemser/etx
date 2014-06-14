@@ -38,11 +38,14 @@ public class Coordination implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	private String id;
+	private Date createTime;
 	private Date startTime;
+	private Date endTime;
 	private int state;
 	private List<Participant> participants;
 
-	public Coordination() {		
+	public Coordination() {	
+		this.createTime = new Date();
 		this.state = CREATED;
 	}
 	
@@ -118,7 +121,12 @@ public class Coordination implements Serializable {
 	
 	@XmlTransient
 	public String getStateDescription() {
-		switch (getState()) {
+		return getStateDescription(getState());
+	}
+
+	@XmlTransient
+	public String getStateDescription(int state) {
+		switch (state) {
 		case CREATED:
 			return "created";
 		case ENDED:
@@ -132,5 +140,22 @@ public class Coordination implements Serializable {
 		default:
 			return "undefined";
 		}
+	}
+
+	
+	public Date getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
+	}
+
+	public Date getEndTime() {
+		return endTime;
+	}
+
+	public void setEndTime(Date endTime) {
+		this.endTime = endTime;
 	}
 }

@@ -48,22 +48,6 @@ public class Participant implements Serializable {
 		this.state = state;
 	}
 
-	@XmlTransient
-	public String getStateDescription() {
-		switch (getState()) {
-		case JOINED:
-			return "created";
-		case EXECUTED:
-			return "executed";
-		case CONFIRMED:
-			return "confirmed";
-		case CANCELLED:
-			return "cancelled";
-		default:
-			return "undefined";
-		}
-	}
-
 	public String getName() {
 		return name;
 	}
@@ -102,5 +86,26 @@ public class Participant implements Serializable {
 
 	public void setCancelTime(Date cancelTime) {
 		this.cancelTime = cancelTime;
+	}
+	
+	@XmlTransient
+	public String getStateDescription() {
+		return getStateDescription(getState());
+	}
+	
+	@XmlTransient
+	public String getStateDescription(int state) {
+		switch (state) {
+		case JOINED:
+			return "created";
+		case EXECUTED:
+			return "executed";
+		case CONFIRMED:
+			return "confirmed";
+		case CANCELLED:
+			return "cancelled";
+		default:
+			return "undefined";
+		}
 	}
 }

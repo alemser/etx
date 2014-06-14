@@ -37,10 +37,16 @@ public class CoordinationServiceImpl implements CoordinationService {
 		getRepository().setParticipantState(coordinationId, participantId, state);
 	}
 	
+	@POST
+	@Path("coordState")
+	public void coordState(@FormParam("cid") String coordinationId, @FormParam("st") int state) {
+		getRepository().setCoordinationState(coordinationId, state);
+	}
+	
 	@GET
 	@Path("{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Coordination getCoordination(@PathParam("id") String id) {
+	public Coordination coordination(@PathParam("id") String id) {
 		return getRepository().getCoordination(id);
 	}
 	

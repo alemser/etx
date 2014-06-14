@@ -38,4 +38,11 @@ public interface Repository {
 	 * @param participantId the participant id.
 	 */
 	void setParticipantState(String coordinationId, String participantId, int state);
+
+	/**
+	 * Defines the coordination state.
+	 * @param coordinationId the coordination id.
+	 * @param state the disired state.
+	 */
+	void setCoordinationState(String coordinationId, int state);
 }

@@ -62,6 +62,15 @@ public class MemoryRepository implements Repository {
 			}
 		}
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setCoordinationState(String coordinationId, int state) {
+		CoordinationEntity coord = (CoordinationEntity) getCoordination(coordinationId);
+		coord.updateState(state);
+	}
 	
 	/**
 	 * {@inheritDoc}
