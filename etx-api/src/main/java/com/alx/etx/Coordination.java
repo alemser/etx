@@ -35,6 +35,10 @@ public class Coordination implements Serializable {
 	 * Coordination ended because participant cancellation (error state)
 	 */
 	public static final int ENDED_CANCELLED = 4;
+	/**
+	 * Coordination is in a inconsistent state (must be cancelled).
+	 */
+	public static final int INCONSISTENT = 5;	
 	
 	private static final long serialVersionUID = 1L;
 	private String id;

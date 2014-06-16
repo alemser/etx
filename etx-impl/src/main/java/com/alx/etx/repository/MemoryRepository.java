@@ -1,9 +1,9 @@
 package com.alx.etx.repository;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.alx.etx.Coordination;
 import com.alx.etx.Participant;
@@ -17,7 +17,7 @@ import com.alx.etx.model.ParticipantEntity;
  */
 public class MemoryRepository implements Repository {
 
-	private static Map<String, CoordinationEntity> coordinations = new HashMap<String, CoordinationEntity>();
+	private static Map<String, CoordinationEntity> coordinations = new ConcurrentHashMap<String, CoordinationEntity>();
 	
 	/**
 	 * {@inheritDoc}
@@ -29,6 +29,12 @@ public class MemoryRepository implements Repository {
 		c.start();
 		coordinations.put(id, c);
 		return id;
+	}
+	
+	@Override
+	public void end(String coordinationId) {
+		CoordinationEntity coordination = (CoordinationEntity) getCoordination(coordinationId);
+		coordination.end();
 	}
 	
 	/**

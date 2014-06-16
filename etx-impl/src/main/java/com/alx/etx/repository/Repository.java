@@ -17,6 +17,12 @@ public interface Repository {
 	String initCoordination();
 	
 	/**
+	 * Finaliza a coordenação.
+	 * @param coordinationId o id da coordenação.
+	 */
+	void end(String coordinationId);
+	
+	/**
 	 * Join an participant into an coordination.
 	 * @param coordinationId the coordination id.
 	 * @param participantName the participant name.

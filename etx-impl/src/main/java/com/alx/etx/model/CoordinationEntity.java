@@ -33,6 +33,43 @@ public class CoordinationEntity extends Coordination implements State {
 	}
 
 	/**
+	 * Ends the coordination.
+	 */
+	public void end() {
+		
+		switch (getState()) {
+		case RUNNING:	
+			boolean allExecuted = true;
+			for (Participant part : getParticipants() ) {
+				ParticipantEntity pentity = (ParticipantEntity) part;
+				if( pentity.getState() != Participant.CONFIRMED ) {
+					allExecuted = false;
+					break;
+				}
+			}
+			
+			if( allExecuted ) {
+				updateState(ENDED);
+			} else {
+				updateState(INCONSISTENT);
+				end();
+			}
+			break;
+			
+		case INCONSISTENT:
+			for (Participant part : getParticipants() ) {
+				ParticipantEntity pentity = (ParticipantEntity) part;
+				pentity.updateState(Participant.CANCELLED);
+			}
+			updateState(ENDED_CANCELLED);
+			break;
+			
+		default:
+			break;
+		}
+	}
+	
+	/**
 	 * Update the coordination state.
 	 * @param state the new state of the coordination.
 	 */

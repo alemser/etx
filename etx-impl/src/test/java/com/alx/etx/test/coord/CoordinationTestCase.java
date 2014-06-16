@@ -22,6 +22,24 @@ public class CoordinationTestCase extends Base {
 	}
 
 	@Test
+	public void testEndSuccessful() {
+		String coordId = start();
+
+		String pid = join(coordId, "p1");
+
+		changePartState(coordId, pid, Participant.EXECUTED);
+		changePartState(coordId, pid, Participant.CONFIRMED);
+
+		end(coordId);
+		
+		Coordination coord = getCoordination(coordId);
+		
+		Assert.assertNotNull(coord);
+		
+		Assert.assertEquals(Coordination.ENDED, coord.getState());
+	}
+	
+	@Test
 	public void testChangeState() {
 		String coordId = start();
 
@@ -103,6 +121,16 @@ public class CoordinationTestCase extends Base {
 		return response.readEntity(String.class);
 	}
 
+	protected void end(String coordId) {
+		Form f = new Form("cid", coordId);
+		Invocation invocation = target.path("etx/end").request().buildPost(Entity.form(f));
+		Response response = invocation.invoke();
+		if (response.getStatus() > 204) {
+			throw new RuntimeException(response.getStatusInfo()
+					.getReasonPhrase());
+		}
+	}
+	
 	protected void changePartState(String cid, String pid, int state) {
 		Form f = new Form("cid", cid).param("pid", pid).param("st", "" + state);
 		Invocation invocation = target.path("etx/partState").request()

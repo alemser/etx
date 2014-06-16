@@ -30,6 +30,12 @@ public class CoordinationServiceImpl implements CoordinationService {
 	public String join(@FormParam("cid") String coordinationId, @FormParam("pname") String participantName) {
 		return getRepository().join(coordinationId, participantName);
 	}
+
+	@POST
+	@Path("end")
+	public void end(@FormParam("cid") String coordinationId) {
+		getRepository().end(coordinationId);
+	}
 	
 	@POST
 	@Path("partState")
