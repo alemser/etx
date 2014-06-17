@@ -163,6 +163,22 @@ public class Coordination implements Serializable {
 		this.endTime = endTime;
 	}
 	
+	public boolean allConfirmed() {
+		return allDesiredState(Participant.CONFIRMED);
+	}
+	
+	public boolean allExecuted() {
+		return allDesiredState(Participant.EXECUTED);
+	}
+	
+	public boolean allCancelled() {
+		return allDesiredState(Participant.CANCELLED);
+	}
+	
+	public boolean allJoined() {
+		return allDesiredState(Participant.JOINED);
+	}
+	
 	private boolean allDesiredState(int desiredState) {
 		boolean allIn = true;
 		for (Participant p : this.participants ) {
