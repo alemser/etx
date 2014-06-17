@@ -162,4 +162,15 @@ public class Coordination implements Serializable {
 	public void setEndTime(Date endTime) {
 		this.endTime = endTime;
 	}
+	
+	private boolean allDesiredState(int desiredState) {
+		boolean allIn = true;
+		for (Participant p : this.participants ) {
+			if( p.getState() != desiredState ) {
+				allIn = false;
+				break;
+			}
+		}
+		return allIn;
+	}
 }
