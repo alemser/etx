@@ -4,9 +4,7 @@ import com.alx.etx.Coordination;
 
 
 /**
- * Proxy interface for the coordination services.
- * 
- * @author alemser
+ * Interface for the coordination services.
  */
 public interface CoordinationService {
 

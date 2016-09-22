@@ -1,5 +1,7 @@
 package com.alx.etx;
 
+import static com.alx.etx.CoordinationState.*;
+import static com.alx.etx.ParticipantState.*;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
@@ -14,31 +16,6 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author alemser
  */
 public class Coordination implements Serializable {
-	
-	/**
-	 * Coordination was created but was not started yet.
-	 */
-	public static final int CREATED = 0;
-	/**
-	 * Coordination was created and started.
-	 */
-	public static final int RUNNING = 1;
-	/**
-	 * Coordination ended successfully (confirmed).
-	 */
-	public static final int ENDED = 2;
-	/**
-	 * Coordination ended with timeout (error state)
-	 */
-	public static final int ENDED_TIMEOUT = 3;
-	/**
-	 * Coordination ended because participant cancellation (error state)
-	 */
-	public static final int ENDED_CANCELLED = 4;
-	/**
-	 * Coordination is in a inconsistent state (must be cancelled).
-	 */
-	public static final int INCONSISTENT = 5;	
 	
 	private static final long serialVersionUID = 1L;
 	private String id;
@@ -164,22 +141,22 @@ public class Coordination implements Serializable {
 	}
 	
 	public boolean allConfirmed() {
-		return allDesiredState(Participant.CONFIRMED);
+		return allInDesiredState(CONFIRMED);
 	}
 	
 	public boolean allExecuted() {
-		return allDesiredState(Participant.EXECUTED);
+		return allInDesiredState(EXECUTED);
 	}
 	
 	public boolean allCancelled() {
-		return allDesiredState(Participant.CANCELLED);
+		return allInDesiredState(CANCELLED);
 	}
 	
 	public boolean allJoined() {
-		return allDesiredState(Participant.JOINED);
+		return allInDesiredState(JOINED);
 	}
 	
-	private boolean allDesiredState(int desiredState) {
+	private boolean allInDesiredState(int desiredState) {
 		boolean allIn = true;
 		for (Participant p : this.participants ) {
 			if( p.getState() != desiredState ) {

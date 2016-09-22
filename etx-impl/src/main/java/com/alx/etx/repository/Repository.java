@@ -17,8 +17,8 @@ public interface Repository {
 	String initCoordination();
 	
 	/**
-	 * Finaliza a coordenação.
-	 * @param coordinationId o id da coordenação.
+	 * Ends the coordination.
+	 * @param coordinationId the coordination id.
 	 */
 	void end(String coordinationId);
 	
@@ -48,7 +48,7 @@ public interface Repository {
 	/**
 	 * Defines the coordination state.
 	 * @param coordinationId the coordination id.
-	 * @param state the disired state.
+	 * @param state the desired state.
 	 */
 	void setCoordinationState(String coordinationId, int state);
 }

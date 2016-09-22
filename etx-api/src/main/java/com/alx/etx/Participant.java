@@ -1,5 +1,6 @@
 package com.alx.etx;
 
+import static com.alx.etx.ParticipantState.*;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -7,11 +8,6 @@ import javax.xml.bind.annotation.XmlTransient;
 
 public class Participant implements Serializable {
 
-	public static final int JOINED = 0;
-	public static final int EXECUTED = 1;
-	public static final int CONFIRMED = 2;
-	public static final int CANCELLED = 3;
-	
 	private static final long serialVersionUID = 1L;
 	
 	private String id;

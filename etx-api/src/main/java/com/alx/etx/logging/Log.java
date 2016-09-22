@@ -2,8 +2,7 @@ package com.alx.etx.logging;
 
 /**
  * Log message with the current logger.
- * 
- * @author alemser
+ * TODO: add proper logging.
  */
 public class Log {
 	

@@ -1,5 +1,6 @@
 package com.alx.etx.model;
 
+import static com.alx.etx.ParticipantState.*;
 import java.util.Date;
 
 import com.alx.etx.Participant;

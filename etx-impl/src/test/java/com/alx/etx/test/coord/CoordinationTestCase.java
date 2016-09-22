@@ -1,5 +1,13 @@
 package com.alx.etx.test.coord;
 
+import static com.alx.etx.CoordinationState.CREATED;
+import static com.alx.etx.CoordinationState.ENDED;
+import static com.alx.etx.CoordinationState.RUNNING;
+import static com.alx.etx.ParticipantState.CANCELLED;
+import static com.alx.etx.ParticipantState.CONFIRMED;
+import static com.alx.etx.ParticipantState.EXECUTED;
+import static com.alx.etx.ParticipantState.JOINED;
+
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.Form;
@@ -10,7 +18,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.alx.etx.Coordination;
-import com.alx.etx.Participant;
 import com.alx.etx.test.Base;
 
 public class CoordinationTestCase extends Base {
@@ -27,38 +34,35 @@ public class CoordinationTestCase extends Base {
 
 		String pid = join(coordId, "p1");
 
-		changePartState(coordId, pid, Participant.EXECUTED);
-		changePartState(coordId, pid, Participant.CONFIRMED);
+		changePartState(coordId, pid, EXECUTED);
+		changePartState(coordId, pid, CONFIRMED);
 
 		end(coordId);
-		
+
 		Coordination coord = getCoordination(coordId);
-		
+
 		Assert.assertNotNull(coord);
-		
-		Assert.assertEquals(Coordination.ENDED, coord.getState());
+
+		Assert.assertEquals(ENDED, coord.getState());
 	}
-	
+
 	@Test
 	public void testChangeState() {
 		String coordId = start();
 
 		String pid = join(coordId, "p1");
 
-		changePartState(coordId, pid, Participant.EXECUTED);
+		changePartState(coordId, pid, EXECUTED);
 		Coordination coord = getCoordination(coordId);
-		Assert.assertEquals(Participant.EXECUTED, coord.getParticipants()
-				.get(0).getState());
+		Assert.assertEquals(EXECUTED, coord.getParticipants().get(0).getState());
 
-		changePartState(coordId, pid, Participant.CONFIRMED);
+		changePartState(coordId, pid, CONFIRMED);
 		coord = getCoordination(coordId);
-		Assert.assertEquals(Participant.CONFIRMED,
-				coord.getParticipants().get(0).getState());
+		Assert.assertEquals(CONFIRMED, coord.getParticipants().get(0).getState());
 
-		changePartState(coordId, pid, Participant.CANCELLED);
+		changePartState(coordId, pid, CANCELLED);
 		coord = getCoordination(coordId);
-		Assert.assertEquals(Participant.CANCELLED,
-				coord.getParticipants().get(0).getState());
+		Assert.assertEquals(CANCELLED, coord.getParticipants().get(0).getState());
 
 		coord.print(System.out);
 	}
@@ -67,16 +71,16 @@ public class CoordinationTestCase extends Base {
 	public void testUpdateCoordState() {
 		String coordId = start();
 		try {
-			changeCoordState(coordId, Coordination.CREATED);
+			changeCoordState(coordId, CREATED);
 			Assert.fail("Expected and exception...");
 		} catch (Exception e) {
 
 		}
 
-		changeCoordState(coordId, Coordination.ENDED);
+		changeCoordState(coordId, ENDED);
 
 		try {
-			changeCoordState(coordId, Coordination.RUNNING);
+			changeCoordState(coordId, RUNNING);
 			Assert.fail("Expected and exception...");
 		} catch (Exception e) {
 
@@ -96,8 +100,7 @@ public class CoordinationTestCase extends Base {
 
 		Coordination coord = getCoordination(coordId);
 		Assert.assertEquals(2, coord.getParticipants().size());
-		Assert.assertEquals(Participant.JOINED, coord.getParticipants().get(0)
-				.getState());
+		Assert.assertEquals(JOINED, coord.getParticipants().get(0).getState());
 
 		coord.print(System.out);
 	}
@@ -108,7 +111,7 @@ public class CoordinationTestCase extends Base {
 
 		Coordination coord = getCoordination(coordId);
 
-		Assert.assertEquals(Coordination.RUNNING, coord.getState());
+		Assert.assertEquals(RUNNING, coord.getState());
 		Assert.assertEquals(0, coord.getParticipants().size());
 		Assert.assertNotNull(coord.getStartTime());
 
@@ -126,32 +129,27 @@ public class CoordinationTestCase extends Base {
 		Invocation invocation = target.path("etx/end").request().buildPost(Entity.form(f));
 		Response response = invocation.invoke();
 		if (response.getStatus() > 204) {
-			throw new RuntimeException(response.getStatusInfo()
-					.getReasonPhrase());
+			throw new RuntimeException(response.getStatusInfo().getReasonPhrase());
 		}
 	}
-	
+
 	protected void changePartState(String cid, String pid, int state) {
 		Form f = new Form("cid", cid).param("pid", pid).param("st", "" + state);
-		Invocation invocation = target.path("etx/partState").request()
-				.buildPost(Entity.form(f));
+		Invocation invocation = target.path("etx/partState").request().buildPost(Entity.form(f));
 		invocation.invoke();
 	}
 
 	protected void changeCoordState(String cid, int state) {
 		Form f = new Form("cid", cid).param("st", "" + state);
-		Invocation invocation = target.path("etx/coordState").request()
-				.buildPost(Entity.form(f));
+		Invocation invocation = target.path("etx/coordState").request().buildPost(Entity.form(f));
 		Response response = invocation.invoke();
 		if (response.getStatus() > 204) {
-			throw new RuntimeException(response.getStatusInfo()
-					.getReasonPhrase());
+			throw new RuntimeException(response.getStatusInfo().getReasonPhrase());
 		}
 	}
 
 	protected Coordination getCoordination(String cid) {
-		Invocation invocation = target.path("etx/" + cid)
-				.register(JacksonFeature.class).request().buildGet();
+		Invocation invocation = target.path("etx/" + cid).register(JacksonFeature.class).request().buildGet();
 		Response response = invocation.invoke();
 		return response.readEntity(Coordination.class);
 
@@ -159,8 +157,7 @@ public class CoordinationTestCase extends Base {
 
 	protected String join(String coordId, String pname) {
 		Form f = new Form("cid", coordId).param("pname", pname);
-		Invocation invocation = target.path("etx/join").request()
-				.buildPost(Entity.form(f));
+		Invocation invocation = target.path("etx/join").request().buildPost(Entity.form(f));
 		Response response = invocation.invoke();
 		return response.readEntity(String.class);
 	}

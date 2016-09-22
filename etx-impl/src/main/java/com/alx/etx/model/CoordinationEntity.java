@@ -1,5 +1,7 @@
 package com.alx.etx.model;
 
+import static com.alx.etx.CoordinationState.*;
+import static com.alx.etx.ParticipantState.*;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -42,7 +44,7 @@ public class CoordinationEntity extends Coordination implements State {
 			boolean allExecuted = true;
 			for (Participant part : getParticipants() ) {
 				ParticipantEntity pentity = (ParticipantEntity) part;
-				if( pentity.getState() != Participant.CONFIRMED ) {
+				if( pentity.getState() != CONFIRMED ) {
 					allExecuted = false;
 					break;
 				}
@@ -59,7 +61,7 @@ public class CoordinationEntity extends Coordination implements State {
 		case INCONSISTENT:
 			for (Participant part : getParticipants() ) {
 				ParticipantEntity pentity = (ParticipantEntity) part;
-				pentity.updateState(Participant.CANCELLED);
+				pentity.updateState(CANCELLED);
 			}
 			updateState(ENDED_CANCELLED);
 			break;
