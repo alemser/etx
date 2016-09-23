@@ -11,9 +11,26 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlTransient;
 
 /**
- * The client representantion of the coordination.
+ * The client representation of the coordination.
+ * The coordination is started when, in case of Java language, when the customized JAX-RS client 
+ * detects that the call to the resource which will participate in a coordination. For instance:
  * 
- * @author alemser
+ * <code>
+ * Order order = new Order(...);
+ * Client client = ClientBuilder.newClient();
+ * OrderReport report = client.target("http://company.com/api/order/place")
+        .request(MediaType.APPLICATION_XML)
+        .header("tcc_participant", "true")
+        .post(Entity.xml(order), OrderReport.class);
+ * <code>
+ * 
+ * Some details:
+ * <li>When the tcc_participant header is present the API either will start a new coordination or use an existing one<li>
+ * <li>The new request, now a participant, will join the coordination<li>
+ * <li>The participant details are stored to be invoked latter again<li>
+ * <li>All the contextual information about the coordination is passed in the headers<li>
+ * <li>The participant will receive in the request headers a property informing the current operation (try, cancel or confirm).<li>
+ * <li>The API who creates the coordination first will be responsible to send the confirm or cancel signal to all the current participants. The signal can be sent sync or async using messaging<li>
  */
 public class Coordination implements Serializable {
 	

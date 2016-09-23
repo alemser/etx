@@ -14,43 +14,42 @@ import com.alx.etx.repository.Repository;
 
 /**
  * Main endpoint for transaction coordination procedures.
- * @author alemser
  */
-@Path("etx")
+@Path("/etx")
 public class CoordinationServiceImpl implements CoordinationService {
 
 	@GET
-	@Path("start")
+	@Path("/start")
 	public String start() {
 		return getRepository().initCoordination();
 	}
 	
 	@POST
-	@Path("join")
+	@Path("/join")
 	public String join(@FormParam("cid") String coordinationId, @FormParam("pname") String participantName) {
 		return getRepository().join(coordinationId, participantName);
 	}
 
 	@POST
-	@Path("end")
+	@Path("/end")
 	public void end(@FormParam("cid") String coordinationId) {
 		getRepository().end(coordinationId);
 	}
 	
 	@POST
-	@Path("partState")
+	@Path("/partState")
 	public void partState(@FormParam("cid") String coordinationId, @FormParam("pid") String participantId, @FormParam("st") int state) {
 		getRepository().setParticipantState(coordinationId, participantId, state);
 	}
 	
 	@POST
-	@Path("coordState")
+	@Path("/coordState")
 	public void coordState(@FormParam("cid") String coordinationId, @FormParam("st") int state) {
 		getRepository().setCoordinationState(coordinationId, state);
 	}
 	
 	@GET
-	@Path("{id}")
+	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Coordination coordination(@PathParam("id") String id) {
 		return getRepository().getCoordination(id);
