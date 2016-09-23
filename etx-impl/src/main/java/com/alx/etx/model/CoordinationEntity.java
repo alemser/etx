@@ -41,28 +41,17 @@ public class CoordinationEntity extends Coordination implements State {
 		
 		switch (getState()) {
 		case RUNNING:	
-			boolean allExecuted = true;
-			for (Participant part : getParticipants() ) {
-				ParticipantEntity pentity = (ParticipantEntity) part;
-				if( pentity.getState() != CONFIRMED ) {
-					allExecuted = false;
-					break;
-				}
-			}
-			
-			if( allExecuted ) {
+			if( allConfirmed() ) {
 				updateState(ENDED);
-			} else {
-				updateState(INCONSISTENT);
-				end();
-			}
+				return;
+			} 
+			
+			updateState(INCONSISTENT);
+			end();
 			break;
 			
 		case INCONSISTENT:
-			for (Participant part : getParticipants() ) {
-				ParticipantEntity pentity = (ParticipantEntity) part;
-				pentity.updateState(CANCELLED);
-			}
+			getParticipants().stream().forEach(p-> ((ParticipantEntity)p).updateState(CANCELLED));
 			updateState(ENDED_CANCELLED);
 			break;
 			

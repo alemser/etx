@@ -1,7 +1,15 @@
 package com.alx.etx;
 
-import static com.alx.etx.CoordinationState.*;
-import static com.alx.etx.ParticipantState.*;
+import static com.alx.etx.CoordinationState.CREATED;
+import static com.alx.etx.CoordinationState.ENDED;
+import static com.alx.etx.CoordinationState.ENDED_CANCELLED;
+import static com.alx.etx.CoordinationState.ENDED_TIMEOUT;
+import static com.alx.etx.CoordinationState.RUNNING;
+import static com.alx.etx.ParticipantState.CANCELLED;
+import static com.alx.etx.ParticipantState.CONFIRMED;
+import static com.alx.etx.ParticipantState.EXECUTED;
+import static com.alx.etx.ParticipantState.JOINED;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
@@ -86,7 +94,8 @@ public class Coordination implements Serializable {
 	
 	/**
 	 * Print the current coordination state and info.
-	 * @param out the outputstream the print the coordination info.
+	 * 
+	 * @param out the output stream the print the coordination info.
 	 */
 	public void print(OutputStream out) {
 		StringBuilder sb = new StringBuilder();
@@ -103,11 +112,9 @@ public class Coordination implements Serializable {
 		if( psize == 0 ) {
 			sb.append("There is no registered participants.");
 			
-		} else {
+		} else {			
 			sb.append("There " + (psize > 1 ? " are " : " is ") + psize + " registered participant" + (psize>1?"s" : "") + ".\n");
-			for (Participant p : getParticipants() ) {
-				sb.append("=> Participant " + p.getId() + " state is " + p.getStateDescription()+  "\n");
-			}
+			getParticipants().stream().forEach(p-> sb.append("=> Participant " + p.getId() + " state is " + p.getStateDescription()+  "\n"));
 		}
 		
 		try {
@@ -174,13 +181,6 @@ public class Coordination implements Serializable {
 	}
 	
 	private boolean allInDesiredState(int desiredState) {
-		boolean allIn = true;
-		for (Participant p : this.participants ) {
-			if( p.getState() != desiredState ) {
-				allIn = false;
-				break;
-			}
-		}
-		return allIn;
+		return getParticipants().stream().allMatch(p-> p.getState() == desiredState);
 	}
 }

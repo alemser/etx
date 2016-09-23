@@ -61,12 +61,7 @@ public class MemoryRepository implements Repository {
 	public void setParticipantState(String coordinationId, String participantId, int state) {
 		Coordination coord = coordinations.get(coordinationId);
 		List<Participant> participants = coord.getParticipants();
-		for (Participant participant : participants) {
-			if( participant.getId().equals(participantId) ) {
-				((ParticipantEntity) participant).updateState(state);
-				break;
-			}
-		}
+		participants.stream().forEach(p-> ((ParticipantEntity)p).updateState(state));
 	}
 
 	/**
