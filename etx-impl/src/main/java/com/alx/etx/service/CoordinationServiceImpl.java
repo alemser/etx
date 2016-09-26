@@ -38,13 +38,13 @@ public class CoordinationServiceImpl implements CoordinationService {
 	
 	@POST
 	@Path("/partState")
-	public void partState(@FormParam("cid") String coordinationId, @FormParam("pid") String participantId, @FormParam("st") int state) {
+	public void changeParticipatState(@FormParam("cid") String coordinationId, @FormParam("pid") String participantId, @FormParam("st") int state) {
 		getRepository().setParticipantState(coordinationId, participantId, state);
 	}
 	
 	@POST
 	@Path("/coordState")
-	public void coordState(@FormParam("cid") String coordinationId, @FormParam("st") int state) {
+	public void changeCoordinationState(@FormParam("cid") String coordinationId, @FormParam("st") int state) {
 		getRepository().setCoordinationState(coordinationId, state);
 	}
 	
