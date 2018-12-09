@@ -1,6 +1,8 @@
 package com.alx.etx.service;
 
-import com.alx.etx.Coordination;
+import com.alx.etx.data.Coordination;
+import com.alx.etx.data.CoordinationConfiguration;
+import reactor.core.publisher.Mono;
 
 
 /**
@@ -13,7 +15,7 @@ public interface CoordinationService {
 	 * 
 	 * @return the coordination id;
 	 */
-	String start();
+	Mono<Coordination> start(CoordinationConfiguration configuration);
 	
 	/**
 	 * Makes a participant join the given coordination.
@@ -23,32 +25,39 @@ public interface CoordinationService {
 	 * 
 	 * @return the participant id.
 	 */
-	String join(String coordinationId, String participantName);
+	Mono<String> join(String coordinationId, String participantName);
 
 	/**
 	 * Ends the coordination confirming or canceling the transaction.
 	 * 
 	 * @param coordinationId the coordination id.
 	 */
-	void end(String coordinationId);
-	
+	Mono<Void> end(String coordinationId);
+
 	/**
-	 * Change the participant state in the coordination.
-	 * 
+	 * Change the participant state in the coordination to execute.
+	 *
 	 * @param coordinationId the coordination id.
 	 * @param participantId the participant id.
-	 * @param state the desired state {@see ParticipantState}
 	 */
-	void changeParticipatState(String coordinationId, String participantId, int state);
-	
+	Mono<Void> execute(String coordinationId, String participantId);
+
 	/**
-	 * Change the coordination state.
-	 * 
+	 * Change the participant state in the coordination to confirm.
+	 *
 	 * @param coordinationId the coordination id.
-	 * @param state the coordination state {@see CoordinationState}.
+	 * @param participantId the participant id.
 	 */
-	void changeCoordinationState(String coordinationId, int state);
-	
+	Mono<Void> confirm(String coordinationId, String participantId);
+
+	/**
+	 * Change the participant state in the coordination to cancelled.
+	 *
+	 * @param coordinationId the coordination id.
+	 * @param participantId the participant id.
+	 */
+	Mono<Void> cancel(String coordinationId, String participantId);
+
 	/**
 	 * Returns a coordination by id.
 	 * 
@@ -56,5 +65,5 @@ public interface CoordinationService {
 	 * 
 	 * @return the coordination id.
 	 */
-	Coordination coordination(String id);
+	Mono<Coordination> get(String id);
 }
