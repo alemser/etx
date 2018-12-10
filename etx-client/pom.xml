@@ -1,8 +1,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>etx-app</artifactId>
-	<name>Implementation of REST transaction API</name>
+	<artifactId>etx-client</artifactId>
+	<name>Implementation of REST transaction Client</name>
 
 	<parent>
 		<groupId>com.alx</groupId>
@@ -12,16 +12,9 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>com.alx</groupId>
-			<artifactId>etx-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.glassfish.jersey.containers</groupId>
-			<artifactId>jersey-container-grizzly2-http</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.glassfish.jersey.media</groupId>
-			<artifactId>jersey-media-json-jackson</artifactId>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webflux</artifactId>
+			<version>5.1.3.RELEASE</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>

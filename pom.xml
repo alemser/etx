@@ -12,6 +12,7 @@
 	<modules>
 		<module>etx-api</module>
 		<module>etx-app</module>
+		<module>etx-client</module>
 	</modules>
 
 	<properties>
@@ -34,6 +35,11 @@
 			<dependency>
 				<groupId>com.alx</groupId>
 				<artifactId>etx-app</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.alx</groupId>
+				<artifactId>etx-client</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 
