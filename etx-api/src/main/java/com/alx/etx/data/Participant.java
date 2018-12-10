@@ -10,6 +10,9 @@ public class Participant implements Serializable {
 	
 	private String id;
 	private String name;
+	private String payload;
+	private String callbackUrl;
+	private String callbackToken;
 	private OffsetDateTime joinTime;
 	private OffsetDateTime executeTime;
 	private OffsetDateTime confirmTime;
@@ -76,5 +79,29 @@ public class Participant implements Serializable {
 
 	public void setCancelTime(OffsetDateTime cancelTime) {
 		this.cancelTime = cancelTime;
+	}
+
+	public String getPayload() {
+		return payload;
+	}
+
+	public void setPayload(String payload) {
+		this.payload = payload;
+	}
+
+	public String getCallbackUrl() {
+		return callbackUrl;
+	}
+
+	public void setCallbackUrl(String callbackUrl) {
+		this.callbackUrl = callbackUrl;
+	}
+
+	public String getCallbackToken() {
+		return callbackToken;
+	}
+
+	public void setCallbackToken(String callbackToken) {
+		this.callbackToken = callbackToken;
 	}
 }

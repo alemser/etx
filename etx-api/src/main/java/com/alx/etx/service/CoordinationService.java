@@ -19,10 +19,10 @@ public interface CoordinationService {
 	
 	/**
 	 * Makes a participant join the given coordination.
-	 * 
+	 *
 	 * @param coordinationId the coordination id.
 	 * @param participantName the participant name.
-	 * 
+	 *
 	 * @return the participant id.
 	 */
 	Mono<String> join(String coordinationId, String participantName);
