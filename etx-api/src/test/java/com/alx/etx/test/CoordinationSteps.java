@@ -3,6 +3,7 @@ package com.alx.etx.test;
 import com.alx.etx.EtxConfiguration;
 import com.alx.etx.data.Coordination;
 import com.alx.etx.data.CoordinationConfiguration;
+import com.alx.etx.data.Participant;
 import com.alx.etx.model.ParticipantStateListener;
 import com.alx.etx.service.CoordinationService;
 import com.alx.etx.service.CoordinationServiceImpl;
@@ -23,7 +24,8 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
-@ContextConfiguration(classes = {CoordinationServiceImpl.class, EtxConfiguration.class, ParticipantStateListener.class})
+@ContextConfiguration(classes = {CoordinationServiceImpl.class, EtxConfiguration.class,
+        ParticipantStateListener.class})
 public class CoordinationSteps implements En {
 
     @Autowired
@@ -58,7 +60,7 @@ public class CoordinationSteps implements En {
             participantNamesToActOn = dataTable.asList();
             handleException(() -> {
                 if ("join".equals(action)) {
-                    participantNamesToActOn.forEach(pname -> service.join(coordination.getId(), pname).block());
+                    participantNamesToActOn.forEach(pname -> service.join(coordination.getId(), new Participant(pname)).block());
                 } else if ("execute".equals(action)) {
                     coordination.getParticipants().values().stream()
                             .filter(p -> participantNamesToActOn.contains(p.getName()))

@@ -2,6 +2,8 @@ package com.alx.etx.service;
 
 import com.alx.etx.data.Coordination;
 import com.alx.etx.data.CoordinationConfiguration;
+import com.alx.etx.data.Participant;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 
@@ -18,14 +20,15 @@ public interface CoordinationService {
 	Mono<Coordination> start(CoordinationConfiguration configuration);
 	
 	/**
-	 * Makes a participant join the given coordination.
+	 * Add a executed participant to the coordination.
 	 *
 	 * @param coordinationId the coordination id.
-	 * @param participantName the participant name.
+	 * @param participant the participant.
 	 *
-	 * @return the participant id.
+	 * @return the participant.
 	 */
-	Mono<String> join(String coordinationId, String participantName);
+	Mono<Participant> join(String coordinationId, Participant participant);
+
 
 	/**
 	 * Ends the coordination confirming or canceling the transaction.
@@ -66,4 +69,13 @@ public interface CoordinationService {
 	 * @return the coordination id.
 	 */
 	Mono<Coordination> get(String id);
+
+	/**
+	 * Returns a coordination by id.
+	 *
+	 * @param id the coordination id.
+	 *
+	 * @return the coordination id.
+	 */
+	Flux<Coordination> getNonConsistents();
 }

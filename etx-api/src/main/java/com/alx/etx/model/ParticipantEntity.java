@@ -2,13 +2,17 @@ package com.alx.etx.model;
 
 import com.alx.etx.data.Participant;
 import com.alx.etx.data.ParticipantState;
+import com.alx.etx.service.exception.CoordinationException;
 import com.alx.etx.service.exception.InvalidParticipantStateException;
+import sun.security.krb5.internal.PAData;
 
 import java.time.OffsetDateTime;
 
 import static com.alx.etx.data.ParticipantState.CONFIRMED;
 import static com.alx.etx.data.ParticipantState.EXECUTED;
 import static com.alx.etx.data.ParticipantState.JOINED;
+import static com.alx.etx.data.ParticipantState.UNDEFINED;
+import static java.time.OffsetDateTime.now;
 
 /**
  * An coordination participant.
@@ -18,7 +22,32 @@ import static com.alx.etx.data.ParticipantState.JOINED;
 public class ParticipantEntity extends Participant {
 
 	private static final long serialVersionUID = 1L;
-	
+
+
+	public ParticipantEntity() {
+		super();
+	}
+
+	public ParticipantEntity(Participant participant) {
+		this();
+		setName(participant.getName());
+		setJoinTime(now());
+		setExecuteTime(now());
+		setCallbackToken(participant.getCallbackToken());
+		setCallbackUrl(participant.getCallbackUrl());
+		setPayload(participant.getPayload());
+		switch (participant.getState()) {
+			case EXECUTED: setState(EXECUTED);
+			break;
+
+			case UNDEFINED:
+			case JOINED: setState(JOINED);
+			break;
+
+			default: throw new CoordinationException("Cannot create participant with " + participant.getState() + " state");
+		}
+	}
+
 	/**
 	 * Update the participant state.
 	 * @param state the new state of the participant.
@@ -30,16 +59,16 @@ public class ParticipantEntity extends Participant {
 			
 			switch (state) {
 			case EXECUTED:
-				setExecuteTime(OffsetDateTime.now());
+				setExecuteTime(now());
 				break;
 			case CONFIRMED:
-				setConfirmTime(OffsetDateTime.now());
+				setConfirmTime(now());
 				break;
 			case CANCELLED:
-				setCancelTime(OffsetDateTime.now());
+				setCancelTime(now());
 				break;
 			case JOINED:
-				setJoinTime(OffsetDateTime.now());
+				setJoinTime(now());
 				break;
 			default:
 				break;

@@ -20,8 +20,13 @@ public class Participant implements Serializable {
 	private ParticipantState state;
 
 	public Participant() {
-		this.state = JOINED;
+		this.state = UNDEFINED;
 		this.joinTime = OffsetDateTime.now();
+	}
+
+	public Participant(String name) {
+		this();
+		setName(name);
 	}
 	
 	public String getId() {
@@ -103,5 +108,9 @@ public class Participant implements Serializable {
 
 	public void setCallbackToken(String callbackToken) {
 		this.callbackToken = callbackToken;
+	}
+
+	public void setState(ParticipantState state) {
+		this.state = state;
 	}
 }

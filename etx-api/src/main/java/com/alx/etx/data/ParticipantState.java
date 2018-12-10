@@ -28,5 +28,10 @@ public enum  ParticipantState {
 	/**
 	 * Participant received a cancellation request and it cancelled by a timed out coordination.
 	 */
-	CANCELLED_BY_TIMEOUT
+	CANCELLED_BY_TIMEOUT,
+
+	/**
+	 * Not know participant state.
+	 */
+	UNDEFINED
 }

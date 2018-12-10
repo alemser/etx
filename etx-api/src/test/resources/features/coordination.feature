@@ -176,3 +176,18 @@ Feature: Handle coordination
       |FraudService|
     And I end the coordination in 1 "MILLISECONDS" from now
     And the coordination state is "ENDED_CANCELLED"
+
+  Scenario: Scheduled ended inconsistent coordinations
+    When a coordination is started
+    And I "join" the participants
+      |CardService|
+      |FraudService|
+    And I "execute" the participants
+      |CardService|
+      |FraudService|
+    And I "confirm" the participants
+      |CardService|
+    And I end the coordination in 1 "MILLISECONDS" from now
+    Then the coordination state is "INCONSISTENT"
+    When I end the coordination in 4 "SECONDS" from now
+    Then the coordination state is "ENDED_TIMEOUT"

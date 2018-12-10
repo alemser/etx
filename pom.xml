@@ -72,6 +72,19 @@
 				<scope>compile</scope>
 			</dependency>
 
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-webflux</artifactId>
+				<version>5.1.3.RELEASE</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-log4j12</artifactId>
+				<version>1.7.25</version>
+			</dependency>
+
+
 			<!-- resteasy dependency -->
 			<dependency>
 				<groupId>org.jboss.resteasy</groupId>
