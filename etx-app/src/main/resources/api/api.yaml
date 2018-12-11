@@ -1,0 +1,111 @@
+openapi: "3.0.0"
+info:
+  version: 0.0.1
+  title: Etx Coordination
+  license:
+    name: Apache
+servers:
+  - url: http://localhost:8080
+paths:
+  /coordinations:
+    get:
+      summary: List all coordinations
+      operationId: listCoordinations
+      tags:
+        - coordinations
+      parameters:
+        - name: limit
+          in: query
+          description: How many items to return at one time (max 100)
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: A paged array of coordinations
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Coordinations"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      summary: Starts a new coordination
+      operationId: startCoordination
+      tags:
+        - coordinations
+      responses:
+        '201':
+          description: Null response
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /coordinations/{coordinationId}:
+    get:
+      summary: Info for a specific coordination
+      operationId: coordinationById
+      tags:
+        - coordinations
+      parameters:
+        - name: coordinationId
+          in: path
+          required: true
+          description: The id of the coordination to retrieve
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Expected response to a valid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Coordination"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  schemas:
+    Coordination:
+      required:
+        - id
+        - timeout
+        - timeoutUnit
+      properties:
+        id:
+          type: string
+          readOnly: true
+        timeout:
+          type: integer
+          format: int32
+        timeoutUnit:
+          type: string
+          enum:
+            - MILLISECONDS
+            - SECONDS
+            - MINUTES
+            - HOURS
+    Coordinations:
+      type: array
+      items:
+        $ref: "#/components/schemas/Coordination"
+    Error:
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
