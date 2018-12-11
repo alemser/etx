@@ -35,7 +35,7 @@ public interface CoordinationService {
 	 * 
 	 * @param coordinationId the coordination id.
 	 */
-	Mono<Void> end(String coordinationId);
+	Mono<Coordination> end(String coordinationId);
 
 	/**
 	 * Change the participant state in the coordination to execute.

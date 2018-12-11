@@ -189,5 +189,5 @@ Feature: Handle coordination
       |CardService|
     And I end the coordination in 1 "MILLISECONDS" from now
     Then the coordination state is "INCONSISTENT"
-    When I end the coordination in 4 "SECONDS" from now
+    When I wait 6 "SECONDS" from now
     Then the coordination state is "ENDED_TIMEOUT"

@@ -69,13 +69,12 @@ public class CoordinationServiceImpl implements CoordinationService {
 						Mono.error(new CoordinationException("Cannot join to not running coordination")));
 	}
 
-	public Mono<Void> end(String coordinationId) {
+	public Mono<Coordination> end(String coordinationId) {
 	    return get(coordinationId)
 				.map( c -> {
 					((CoordinationEntity) c).end();
 					return c;
-				})
-				.then();
+				});
 	}
 
 	@Override

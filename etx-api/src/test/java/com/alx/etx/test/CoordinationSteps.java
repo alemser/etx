@@ -5,6 +5,7 @@ import com.alx.etx.data.Coordination;
 import com.alx.etx.data.CoordinationConfiguration;
 import com.alx.etx.data.Participant;
 import com.alx.etx.model.ParticipantStateListener;
+import com.alx.etx.service.CoordinationCheckTask;
 import com.alx.etx.service.CoordinationService;
 import com.alx.etx.service.CoordinationServiceImpl;
 import cucumber.api.Scenario;
@@ -25,7 +26,7 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 @ContextConfiguration(classes = {CoordinationServiceImpl.class, EtxConfiguration.class,
-        ParticipantStateListener.class})
+        ParticipantStateListener.class, CoordinationCheckTask.class})
 public class CoordinationSteps implements En {
 
     @Autowired
@@ -101,6 +102,12 @@ public class CoordinationSteps implements En {
         Then("an exception with message {string} is throw", (String message) -> {
             assertThat(caughtException, notNullValue());
             assertThat(caughtException.getMessage(), equalTo(message));
+        });
+
+        When("I wait {int} {string} from now", (Integer n, String timeUnit) -> {
+            try {
+                TimeUnit.valueOf(timeUnit).sleep(n);
+            } catch (InterruptedException e) {e.printStackTrace();}
         });
     }
 
