@@ -71,11 +71,12 @@ public interface CoordinationService {
 	Mono<Coordination> get(String id);
 
 	/**
-	 * Returns a coordination by id.
-	 *
-	 * @param id the coordination id.
-	 *
-	 * @return the coordination id.
+	 * Returns all coordinations.
+	 */
+	Flux<Coordination> get();
+
+	/**
+	 * Returns coordinations in non consistent state.
 	 */
 	Flux<Coordination> getNonConsistents();
 }

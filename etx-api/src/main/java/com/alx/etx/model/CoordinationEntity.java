@@ -15,7 +15,6 @@ import static com.alx.etx.data.CoordinationState.ENDED_TIMEOUT;
 import static com.alx.etx.data.CoordinationState.INCONSISTENT;
 import static com.alx.etx.data.CoordinationState.ROLLEDBACK;
 import static com.alx.etx.data.CoordinationState.RUNNING;
-import static com.alx.etx.data.ParticipantState.CANCELLED;
 import static com.alx.etx.data.ParticipantState.CANCELLED_BY_TIMEOUT;
 
 /**
@@ -31,7 +30,7 @@ public class CoordinationEntity extends Coordination {
 	public Coordination start() {
 		setId(UUID.randomUUID().toString());
 		updateState(RUNNING);
-		setInconsistenceStateTimeout(getStartTime().plus(10, ChronoUnit.SECONDS));
+		setInconsistenceStateTimeout(getStartTime().plus(1, ChronoUnit.SECONDS));
 		return this;
 	}
 

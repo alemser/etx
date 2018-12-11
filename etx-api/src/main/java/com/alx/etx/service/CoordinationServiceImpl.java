@@ -46,9 +46,10 @@ public class CoordinationServiceImpl implements CoordinationService {
 	public Mono<Coordination> start(CoordinationConfiguration configuration) {
 	    return Mono.fromSupplier( () -> {
 	        Coordination coord = new CoordinationEntity().start();
-	        OffsetDateTime timeout = coord.getStartTime().plus(configuration.getTimeoutInMillis(), ChronoUnit.MILLIS);
+	        OffsetDateTime timeout = coord.getStartTime().plus(configuration.getTimeout(), configuration.getTimeoutUnit());
 	        coord.setInconsistenceStateTimeout(timeout);
 	        coordinations.put(coord.getId(), coord);
+			logger.info("Coordination {} is {}. Timeout set to {}", coord.getId(), coord.getState(), coord.getInconsistenceStateTimeout());
 	        return coord;
 	    });
 	}
@@ -63,6 +64,7 @@ public class CoordinationServiceImpl implements CoordinationService {
 						String id = UUID.randomUUID().toString();
 						entity.setId(id);
 						coordination.getParticipants().put(id, entity);
+						logger.info("Participant {} joined coordination {} with state {}", entity.getId(), entity.getState(), coordination.getId());
 						return entity;
 					}
 				).switchIfEmpty(
@@ -73,6 +75,7 @@ public class CoordinationServiceImpl implements CoordinationService {
 	    return get(coordinationId)
 				.map( c -> {
 					((CoordinationEntity) c).end();
+					logger.info("Coordination {} ended with state {}", c.getId(), c.getState());
 					return c;
 				});
 	}
@@ -96,9 +99,11 @@ public class CoordinationServiceImpl implements CoordinationService {
 		return get(coordinationId).map( coord -> {
             Map<String, Participant> participants = coord.getParticipants();
             Participant participant = participants.get(participantId);
-            participant.updateState(state);
-            applicationEventPublisher.publishEvent(new ParticipantEvent(participant, coord));
-            return participant.getState();
+            ParticipantState previousState = participant.getState();
+			participant.updateState(state);
+			applicationEventPublisher.publishEvent(new ParticipantEvent(participant, coord));
+			logger.info("Participant {} state changed from {} to {}", participant.getId(), previousState, participant.getState());
+			return participant.getState();
         }).then();
 	}
 
@@ -112,5 +117,10 @@ public class CoordinationServiceImpl implements CoordinationService {
 				.stream()
 				.filter( c -> c.getState() == INCONSISTENT)
 				.collect(Collectors.toList()));
+	}
+
+	@Override
+	public Flux<Coordination> get() {
+		return Flux.fromIterable(coordinations.values());
 	}
 }

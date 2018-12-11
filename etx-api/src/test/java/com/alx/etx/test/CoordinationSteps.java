@@ -32,15 +32,13 @@ public class CoordinationSteps implements En {
     @Autowired
     private CoordinationService service;
 
-    private CoordinationConfiguration coordinationConfiguration = new CoordinationConfiguration();
+    private CoordinationConfiguration coordinationConfiguration = CoordinationConfiguration.builder().timeoutSec(4L).build();
     private Coordination coordination;
     private Set<String> currentScenarioTags = new HashSet<>();
     private List<String> participantNamesToActOn = new ArrayList<>();
     private Throwable caughtException;
 
     public CoordinationSteps() {
-        coordinationConfiguration.setTimeoutInMillis(4000L);
-
         When("a coordination is started", () -> {
             coordination = service.start(coordinationConfiguration).block();
         });
