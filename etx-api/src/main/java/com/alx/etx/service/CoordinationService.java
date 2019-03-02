@@ -1,6 +1,10 @@
 package com.alx.etx.service;
 
-import com.alx.etx.Coordination;
+import com.alx.etx.data.Coordination;
+import com.alx.etx.data.CoordinationConfiguration;
+import com.alx.etx.data.Participant;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 
 /**
@@ -13,42 +17,50 @@ public interface CoordinationService {
 	 * 
 	 * @return the coordination id;
 	 */
-	String start();
+	Mono<Coordination> start(CoordinationConfiguration configuration);
 	
 	/**
-	 * Makes a participant join the given coordination.
-	 * 
+	 * Add a executed participant to the coordination.
+	 *
 	 * @param coordinationId the coordination id.
-	 * @param participantName the participant name.
-	 * 
-	 * @return the participant id.
+	 * @param participant the participant.
+	 *
+	 * @return the participant.
 	 */
-	String join(String coordinationId, String participantName);
+	Mono<Participant> join(String coordinationId, Participant participant);
+
 
 	/**
 	 * Ends the coordination confirming or canceling the transaction.
 	 * 
 	 * @param coordinationId the coordination id.
 	 */
-	void end(String coordinationId);
-	
+	Mono<Coordination> end(String coordinationId);
+
 	/**
-	 * Change the participant state in the coordination.
-	 * 
+	 * Change the participant state in the coordination to execute.
+	 *
 	 * @param coordinationId the coordination id.
 	 * @param participantId the participant id.
-	 * @param state the desired state {@see ParticipantState}
 	 */
-	void changeParticipatState(String coordinationId, String participantId, int state);
-	
+	Mono<Void> execute(String coordinationId, String participantId);
+
 	/**
-	 * Change the coordination state.
-	 * 
+	 * Change the participant state in the coordination to confirm.
+	 *
 	 * @param coordinationId the coordination id.
-	 * @param state the coordination state {@see CoordinationState}.
+	 * @param participantId the participant id.
 	 */
-	void changeCoordinationState(String coordinationId, int state);
-	
+	Mono<Void> confirm(String coordinationId, String participantId);
+
+	/**
+	 * Change the participant state in the coordination to cancelled.
+	 *
+	 * @param coordinationId the coordination id.
+	 * @param participantId the participant id.
+	 */
+	Mono<Void> cancel(String coordinationId, String participantId);
+
 	/**
 	 * Returns a coordination by id.
 	 * 
@@ -56,5 +68,15 @@ public interface CoordinationService {
 	 * 
 	 * @return the coordination id.
 	 */
-	Coordination coordination(String id);
+	Mono<Coordination> get(String id);
+
+	/**
+	 * Returns all coordinations.
+	 */
+	Flux<Coordination> get();
+
+	/**
+	 * Returns coordinations in non consistent state.
+	 */
+	Flux<Coordination> getNonConsistents();
 }
