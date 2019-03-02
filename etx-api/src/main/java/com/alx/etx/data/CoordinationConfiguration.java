@@ -8,7 +8,7 @@ public class CoordinationConfiguration {
      * Default is 60 seconds (60000 milliseconds)
      */
     private Long timeout = 60000L;
-    private ChronoUnit timeoutUnit;
+    private ChronoUnit timeoutUnit = ChronoUnit.MILLIS;
 
     public ChronoUnit getTimeoutUnit() {
         return timeoutUnit;

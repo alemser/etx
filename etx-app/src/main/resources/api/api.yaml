@@ -80,7 +80,7 @@ components:
       required:
         - id
         - timeout
-        - timeoutUnit
+        - timeout_unit
       properties:
         id:
           type: string
@@ -88,10 +88,10 @@ components:
         timeout:
           type: integer
           format: int32
-        timeoutUnit:
+        timeout_unit:
           type: string
           enum:
-            - MILLISECONDS
+            - MILLIS
             - SECONDS
             - MINUTES
             - HOURS
