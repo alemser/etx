@@ -5,8 +5,6 @@ Feature: Handle coordination requests
       | {"business_key": "myBK"} |
     When I POST to the coordination endpoint
     Then the response status code is 201
-    And the coordination info is present in the response
-    And the coordination state is "RUNNING"
     And response headers contains keys
       | Location |
       | ETag     |
@@ -17,7 +15,8 @@ Feature: Handle coordination requests
     When I POST to the coordination endpoint
     Then the response status code is 201
     When I GET to the location of the previous POST
-    Then the coordination info is present in the response
+    Then the response status code is 200
+    And the coordination info is present in the response
     And the coordination state is "RUNNING"
     And response headers contains keys
       | Content-Type |
@@ -32,3 +31,18 @@ Feature: Handle coordination requests
       | bk     |
       | myBk   |
       | yourBK |
+
+  Scenario Outline: Joining executed participants
+    Given a started coordination
+    When I "join" the participant "<pname>" with "<state_sent>" state
+    Then the response status code is 201
+    And response headers contains keys
+      | Location |
+      | ETag     |
+    When I GET to the location of the previous POST
+    Then the response status code is 201
+     And the participant has the "<state_received>" state
+    Examples:
+      | action | pname       | state_sent | state_received |
+      | join   | CardService |            | JOINED         |
+      | join   | CardService | EXECUTED   | EXECUTED       |

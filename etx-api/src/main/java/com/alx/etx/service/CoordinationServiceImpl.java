@@ -58,17 +58,18 @@ public class CoordinationServiceImpl implements CoordinationService {
 	public Mono<Participant> join(String coordinationId, Participant participant) {
 		return get(coordinationId)
 				.filter(coordination -> coordination.getState() == RUNNING)
+                .switchIfEmpty(
+                        Mono.error(new CoordinationException("Cannot join to not running coordination")))
 				.map(
 					coordination -> {
 						Participant entity = new ParticipantEntity(participant);
 						String id = UUID.randomUUID().toString();
 						entity.setId(id);
 						coordination.getParticipants().put(id, entity);
-						logger.info("Participant {} joined coordination {} with state {}", entity.getId(), entity.getState(), coordination.getId());
+						logger.info("Participant ID {} joined coordination ID {}", entity.getId(), coordination.getId());
 						return entity;
 					}
-				).switchIfEmpty(
-						Mono.error(new CoordinationException("Cannot join to not running coordination")));
+				);
 	}
 
 	public Mono<Coordination> end(String coordinationId) {

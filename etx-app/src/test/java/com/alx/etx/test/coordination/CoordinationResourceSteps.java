@@ -1,50 +1,19 @@
 package com.alx.etx.test.coordination;
 
-import com.alx.etx.Application;
-import com.alx.etx.EtxConfiguration;
-import com.alx.etx.data.Coordination;
-import com.alx.etx.data.CoordinationConfiguration;
-import com.alx.etx.data.Participant;
-import com.alx.etx.model.ParticipantStateListener;
-import com.alx.etx.service.CoordinationCheckTask;
-import com.alx.etx.service.CoordinationService;
-import com.alx.etx.service.CoordinationServiceImpl;
-import cucumber.api.Scenario;
-import cucumber.api.java.Before;
 import cucumber.api.java8.En;
-import io.cucumber.datatable.DataTable;
-import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.test.context.ContextConfiguration;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
 import static com.alx.etx.resource.API.COORDINATIONS_PATH;
+import static com.alx.etx.resource.API.PARTICIPANTS_PATH;
 import static io.restassured.RestAssured.given;
 import static io.restassured.http.ContentType.JSON;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 
-@SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ContextConfiguration(classes = {CoordinationServiceImpl.class, EtxConfiguration.class,
-        ParticipantStateListener.class, CoordinationCheckTask.class})
 public class CoordinationResourceSteps implements En {
-
-    @LocalServerPort
-    private int randomServerPort;
 
     private RequestSpecification requestSpecification;
     private Response response;
@@ -98,12 +67,36 @@ public class CoordinationResourceSteps implements En {
             response.then().body("size()", equalTo(1));
             response.then().body("business_key", hasItems(businesskey));
         });
-    }
 
-    @Before
-    public void setUp(Scenario scenario) {
-        RestAssured.port = randomServerPort;
-        RestAssured.baseURI = "http://localhost";
+        Given("a started coordination", () -> {
+            response = given().contentType(JSON).body("{\"business_key\":\"myBK\"}").post(COORDINATIONS_PATH);
+
+        });
+
+        When("I {string} the participant {string}", (String action, String name) -> {
+            String coordinationId = response.header("ETag").replaceAll("\"", "");
+            if ("join".equals(action)) {
+                String path = PARTICIPANTS_PATH.replace("{cid}", coordinationId);
+                response = given().contentType(JSON).body("{\"name\":\"" + name + "\"}").post(path);
+            }
+        });
+
+        When("I {string} the participant {string} with {string} state", (String action, String name, String state) -> {
+            String coordinationId = response.header("ETag").replaceAll("\"", "");
+            if ("join".equals(action)) {
+                String path = PARTICIPANTS_PATH.replace("{cid}", coordinationId);
+                String stateJsonPart = "";
+                if (state != null && !"".equals(state.trim())) {
+                    stateJsonPart = ", \"state\":\"" + state + "\"";
+                }
+                response = given().contentType(JSON).body("{\"name\":\"" + name + "\"" + stateJsonPart + "}").post(path);
+            }
+
+        });
+
+        Then("the participant has the {string} state", (String state) -> {
+            response.then().body("state", hasItems(state));
+        });
 
     }
 }
