@@ -17,7 +17,7 @@ public enum CoordinationState {
 	 */
 	ENDED,
 	/**
-	 * Coordination ended with timeout (error state)
+	 * Coordination ended with DEFAULT_TIMEOUT (error state)
 	 */
 	ENDED_TIMEOUT,
 	/**

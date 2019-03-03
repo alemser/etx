@@ -14,13 +14,19 @@ paths:
       tags:
         - coordinations
       parameters:
-        - name: limit
+        - name: business_key
           in: query
-          description: How many items to return at one time (max 100)
+          description: the business key to filter the coordinations
           required: false
           schema:
-            type: integer
-            format: int32
+            type: string
+#        - name: limit
+#          in: query
+#          description: How many items to return at one time (max 100)
+#          required: false
+#          schema:
+#            type: integer
+#            format: int32
       responses:
         '200':
           description: A paged array of coordinations
@@ -42,6 +48,13 @@ paths:
       responses:
         '201':
           description: Null response
+          headers:
+            ETag:
+              schema:
+                $ref: "#/components/parameters/ETag"
+            Location:
+              schema:
+                $ref: "#/components/parameters/Location"
         default:
           description: unexpected error
           content:
@@ -67,7 +80,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Coordination"
+                $ref: "#/components/schemas/CoordinationData"
         default:
           description: unexpected error
           content:
@@ -76,15 +89,36 @@ paths:
                 $ref: "#/components/schemas/Error"
 components:
   schemas:
-    Coordination:
-      required:
-        - id
-        - timeout
-        - timeout_unit
+    CoordinationData:
       properties:
         id:
           type: string
           readOnly: true
+        create_time:
+          type: string
+          format: date-time
+          example: 2019-01-01T00:00:01Z
+        end_time:
+          type: string
+          format: date-time
+          example: 2019-01-01T00:00:01Z
+        timeout:
+          type: string
+          format: date-time
+          example: 2019-01-01T00:00:01Z
+        state:
+          type: string
+          enum:
+            - CREATED
+            - RUNNING
+            - ENDED
+            - ENDED_TIMEOUT
+            - ENDED_CANCELLED
+            - TIMEDOUT
+            - INCONSISTENT
+            - ROLLEDBACK
+    CoordinationConfigData:
+      properties:
         timeout:
           type: integer
           format: int32
@@ -98,7 +132,7 @@ components:
     Coordinations:
       type: array
       items:
-        $ref: "#/components/schemas/Coordination"
+        $ref: "#/components/schemas/CoordinationData"
     Error:
       required:
         - code
@@ -109,3 +143,24 @@ components:
           format: int32
         message:
           type: string
+
+  parameters:
+    ETag:
+      name: "Etag"
+      description: "The RFC7232 ETag header field in a response provides the current\
+        \ entity-\ntag for the selected resource. An entity-tag is an opaque identifier\
+        \ for\ndifferent versions of a resource over time, regardless whether multiple\n\
+        versions are valid at the same time. An entity-tag consists of an opaque\n\
+        quoted string, possibly prefixed by a weakness indicator.\n"
+      in: "header"
+      schema:
+        type: "string"
+      required: false
+      example: "7da7a728-f910-11e6-942a-68f728c1ba70"
+    Location:
+      name: "Location"
+      description: "The Location header indicates the URL of a newly created resource\n"
+      in: "header"
+      schema:
+        type: "string"
+      example: "7da7a728-f910-11e6-942a-68f728c1ba70"
