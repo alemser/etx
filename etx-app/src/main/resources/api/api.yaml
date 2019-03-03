@@ -14,13 +14,19 @@ paths:
       tags:
         - coordinations
       parameters:
-        - name: limit
+        - name: business_key
           in: query
-          description: How many items to return at one time (max 100)
+          description: the business key to filter the coordinations
           required: false
           schema:
-            type: integer
-            format: int32
+            type: string
+#        - name: limit
+#          in: query
+#          description: How many items to return at one time (max 100)
+#          required: false
+#          schema:
+#            type: integer
+#            format: int32
       responses:
         '200':
           description: A paged array of coordinations

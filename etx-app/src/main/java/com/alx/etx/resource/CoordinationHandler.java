@@ -71,10 +71,14 @@ public class CoordinationHandler {
 
     private Mono<ServerResponse> createdResponse(Coordination c) {
         URI location = UriComponentsBuilder.fromPath(COORDINATIONS_ID_PATH).buildAndExpand(c.getId()).toUri();
-        return created(location).eTag(c.getId()).contentType(APPLICATION_JSON).syncBody(c);
+        return created(location).eTag(c.getId()).contentType(APPLICATION_JSON).syncBody(toCoordinationData(c));
     }
 
     private Mono<ServerResponse> getResponse(Coordination c) {
+        return ok().eTag(c.getId()).contentType(APPLICATION_JSON).syncBody(toCoordinationData(c));
+    }
+
+    private CoordinationData toCoordinationData(Coordination c) {
         CoordinationData data = new CoordinationData();
         data.setId(c.getId());
         data.setApplicationId(c.getApplicationId());
@@ -83,7 +87,6 @@ public class CoordinationHandler {
         data.setEndTime(c.getEndTime());
         data.setState(c.getState());
         data.setTimeout(c.getTimeout());
-        return ok().eTag(c.getId()).contentType(APPLICATION_JSON).syncBody(data);
+        return data;
     }
-
 }
