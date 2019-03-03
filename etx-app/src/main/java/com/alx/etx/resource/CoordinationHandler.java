@@ -5,6 +5,9 @@ import com.alx.etx.data.CoordinationConfiguration;
 import com.alx.etx.model.CoordinationConfigData;
 import com.alx.etx.model.CoordinationData;
 import com.alx.etx.service.CoordinationService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jdk.nashorn.internal.ir.debug.JSONWriter;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -15,6 +18,7 @@ import reactor.core.publisher.Mono;
 
 import java.net.URI;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 import static com.alx.etx.resource.API.COORDINATIONS_ID_PATH;
 import static com.alx.etx.resource.API.ID_PATH_VAR;
@@ -33,10 +37,15 @@ public class CoordinationHandler {
     @Autowired
     private CoordinationService service;
 
+    @Autowired
+    private ObjectMapper mapper;
+
     public Mono<ServerResponse> get(ServerRequest request) {
-        return Mono.just(request.queryParams().toSingleValueMap())
-                .map(service::get)
-                .flatMap(coords -> ok().contentType(APPLICATION_JSON).body(coords, Coordination.class));
+        return service.get(request.queryParams().toSingleValueMap())
+                .map(this::toCoordinationData)
+                .collectList()
+                .flatMap(this::getResponse)
+                .switchIfEmpty(notFound().build());
     }
 
     public Mono<ServerResponse> getById(ServerRequest request) {
@@ -76,6 +85,10 @@ public class CoordinationHandler {
 
     private Mono<ServerResponse> getResponse(Coordination c) {
         return ok().eTag(c.getId()).contentType(APPLICATION_JSON).syncBody(toCoordinationData(c));
+    }
+
+    private Mono<ServerResponse> getResponse(List<CoordinationData> c) {
+        return ok().contentType(APPLICATION_JSON).syncBody(c);
     }
 
     private CoordinationData toCoordinationData(Coordination c) {
