@@ -1,30 +1,21 @@
 package com.alx.etx.data;
 
+import lombok.Data;
+
 import java.time.temporal.ChronoUnit;
 
-public class CoordinationConfiguration {
+public @Data class CoordinationConfiguration {
     /**
      * Amount of time that an inconsistent coordination will wait until produce a signal to cancel all participants.
      * Default is 60 seconds (60000 milliseconds)
      */
-    private Long timeout = 60000L;
-    private ChronoUnit timeoutUnit = ChronoUnit.MILLIS;
+    public static Long DEFAULT_TIMEOUT = 60000L;
+    public static ChronoUnit DEFAULT_TIMEOUT_UNIT = ChronoUnit.MILLIS;
 
-    public ChronoUnit getTimeoutUnit() {
-        return timeoutUnit;
-    }
-
-    public void setTimeoutUnit(ChronoUnit timeoutUnit) {
-        this.timeoutUnit = timeoutUnit;
-    }
-
-    public Long getTimeout() {
-        return timeout;
-    }
-
-    public void setTimeout(Long timeoutInMillis) {
-        this.timeout = timeoutInMillis;
-    }
+    private Long timeout = DEFAULT_TIMEOUT;
+    private ChronoUnit timeoutUnit = DEFAULT_TIMEOUT_UNIT;
+    private String businessKey;
+    private String applicationId;
 
     public static Builder builder() {
         return new Builder();

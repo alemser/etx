@@ -6,6 +6,8 @@ import com.alx.etx.data.Participant;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Map;
+
 
 /**
  * Interface for the coordination services.
@@ -73,7 +75,7 @@ public interface CoordinationService {
 	/**
 	 * Returns all coordinations.
 	 */
-	Flux<Coordination> get();
+	Flux<Coordination> get(Map<String, String> filters);
 
 	/**
 	 * Returns coordinations in non consistent state.

@@ -30,7 +30,7 @@ public class CoordinationEntity extends Coordination {
 	public Coordination start() {
 		setId(UUID.randomUUID().toString());
 		updateState(RUNNING);
-		setInconsistenceStateTimeout(getStartTime().plus(1, ChronoUnit.SECONDS));
+		setTimeout(getStartTime().plus(1, ChronoUnit.SECONDS));
 		return this;
 	}
 

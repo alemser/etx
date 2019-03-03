@@ -18,7 +18,7 @@ public class CoordinationCheckTask {
 
     @Scheduled(fixedRate = 1000)
     private void endCoordinationTask() {
-        logger.info("Checking for timed out unfinished coordinations.");
+        logger.debug("Checking for timed out unfinished coordinations.");
         coordinationService.getNonConsistents()
                 .filter(Coordination::isTimedOut)
                 .flatMap(coordination -> coordinationService.end(coordination.getId()))

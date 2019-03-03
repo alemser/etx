@@ -11,13 +11,11 @@ import com.alx.etx.service.exception.CoordinationException;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.OffsetDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -47,9 +45,11 @@ public class CoordinationServiceImpl implements CoordinationService {
 	    return Mono.fromSupplier( () -> {
 	        Coordination coord = new CoordinationEntity().start();
 	        OffsetDateTime timeout = coord.getStartTime().plus(configuration.getTimeout(), configuration.getTimeoutUnit());
-	        coord.setInconsistenceStateTimeout(timeout);
+	        coord.setTimeout(timeout);
+	        coord.setBusinessKey(configuration.getBusinessKey());
+	        coord.setApplicationId(configuration.getApplicationId());
 	        coordinations.put(coord.getId(), coord);
-			logger.info("Coordination {} is {}. Timeout set to {}", coord.getId(), coord.getState(), coord.getInconsistenceStateTimeout());
+			logger.info("Coordination {} is {}. Timeout set to {}", coord.getId(), coord.getState(), coord.getTimeout());
 	        return coord;
 	    });
 	}
@@ -120,7 +120,14 @@ public class CoordinationServiceImpl implements CoordinationService {
 	}
 
 	@Override
-	public Flux<Coordination> get() {
-		return Flux.fromIterable(coordinations.values());
+	public Flux<Coordination> get(Map<String, String> filters) {
+	    if (filters == null || filters.isEmpty()) {
+            return Flux.fromIterable(coordinations.values());
+        }
+
+        return Flux.fromIterable(coordinations.values()
+                .stream()
+                .filter(c -> c.getBusinessKey().equals(filters.get("business_key")))
+                .collect(Collectors.toList()));
 	}
 }
