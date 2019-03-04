@@ -81,22 +81,35 @@ public class CoordinationServiceImpl implements CoordinationService {
 				});
 	}
 
-	@Override
-	public Mono<Void> execute(String coordinationId, String participantId) {
+    @Override
+    public Mono<ParticipantState> changeState(String coordinationId, String participantId, ParticipantState desiredState) {
+        switch (desiredState) {
+            case EXECUTED:
+                return execute(coordinationId, participantId);
+            case CONFIRMED:
+                return confirm(coordinationId, participantId);
+            case CANCELLED:
+                return confirm(coordinationId, participantId);
+        }
+        return Mono.error(new CoordinationException("Cannot change participant state."));
+    }
+
+    @Override
+	public Mono<ParticipantState> execute(String coordinationId, String participantId) {
 		return changeParticipantState(coordinationId, participantId, EXECUTED);
 	}
 
 	@Override
-	public Mono<Void> confirm(String coordinationId, String participantId) {
+	public Mono<ParticipantState> confirm(String coordinationId, String participantId) {
 		return changeParticipantState(coordinationId, participantId, CONFIRMED);
 	}
 
 	@Override
-	public Mono<Void> cancel(String coordinationId, String participantId) {
+	public Mono<ParticipantState> cancel(String coordinationId, String participantId) {
 		return changeParticipantState(coordinationId, participantId, CANCELLED);
 	}
 
-	private Mono<Void> changeParticipantState(String coordinationId, String participantId, ParticipantState state) {
+	private Mono<ParticipantState> changeParticipantState(String coordinationId, String participantId, ParticipantState state) {
 		return get(coordinationId).map( coord -> {
             Map<String, Participant> participants = coord.getParticipants();
             Participant participant = participants.get(participantId);
@@ -105,7 +118,7 @@ public class CoordinationServiceImpl implements CoordinationService {
 			applicationEventPublisher.publishEvent(new ParticipantEvent(participant, coord));
 			logger.info("Participant {} state changed from {} to {}", participant.getId(), previousState, participant.getState());
 			return participant.getState();
-        }).then();
+        });
 	}
 
 	public Mono<Coordination> get(String id) {

@@ -27,7 +27,8 @@ public class RouteConfig {
                         .nest(accept(APPLICATION_JSON), c2 -> c2
                                 .GET("", coordinationHandler::get)
                                 .GET("/{id}", coordinationHandler::getById)
-                                .POST("", coordinationHandler::create))).build();
+                                .POST("", coordinationHandler::create)
+                                .PUT("/{id}", coordinationHandler::update))).build();
     }
 
     @Bean

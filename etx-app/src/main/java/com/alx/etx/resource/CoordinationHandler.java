@@ -48,6 +48,13 @@ public class CoordinationHandler {
                 .switchIfEmpty(notFound().build());
     }
 
+    public Mono<ServerResponse> update(ServerRequest request) {
+        return service.end(request.pathVariable("id"))
+                .doOnError( e -> logger.error("Exception while ending coordination", e))
+                .doOnSuccess( c -> logger.info("Successfully ended coordination ID {}", c.getId()))
+                .flatMap(this::getResponse);
+    }
+
     public Mono<ServerResponse> create(ServerRequest request) {
         return request.bodyToMono(CoordinationConfigData.class)
                 .map(this::createConfiguration)
@@ -72,11 +79,11 @@ public class CoordinationHandler {
 
     private Mono<ServerResponse> createdResponse(Coordination c) {
         URI location = UriComponentsBuilder.fromPath(COORDINATIONS_PATH.concat("/{id}")).buildAndExpand(c.getId()).toUri();
-        return created(location).eTag(c.getId()).contentType(APPLICATION_JSON).syncBody(toCoordinationData(c));
+        return created(location).contentType(APPLICATION_JSON).syncBody(toCoordinationData(c));
     }
 
     private Mono<ServerResponse> getResponse(Coordination c) {
-        return ok().eTag(c.getId()).contentType(APPLICATION_JSON).syncBody(toCoordinationData(c));
+        return ok().contentType(APPLICATION_JSON).syncBody(toCoordinationData(c));
     }
 
     private Mono<ServerResponse> getResponse(List<CoordinationData> c) {

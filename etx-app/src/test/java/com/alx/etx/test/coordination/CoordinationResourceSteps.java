@@ -3,6 +3,11 @@ package com.alx.etx.test.coordination;
 import cucumber.api.java8.En;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.alx.etx.data.CoordinationState.ENDED;
 import static com.alx.etx.resource.API.COORDINATIONS_PATH;
 import static com.alx.etx.resource.API.PARTICIPANTS_PATH;
 import static io.restassured.RestAssured.given;
@@ -17,6 +22,8 @@ public class CoordinationResourceSteps implements En {
 
     private RequestSpecification requestSpecification;
     private Response response;
+    private String coordinationLocation;
+    private Map<String, String> pNameAndLocation = new HashMap<>();
 
     public CoordinationResourceSteps() {
         Given("the following payload", (io.cucumber.datatable.DataTable dataTable) -> {
@@ -69,34 +76,52 @@ public class CoordinationResourceSteps implements En {
         });
 
         Given("a started coordination", () -> {
-            response = given().contentType(JSON).body("{\"business_key\":\"myBK\"}").post(COORDINATIONS_PATH);
-
-        });
-
-        When("I {string} the participant {string}", (String action, String name) -> {
-            String coordinationId = response.header("ETag").replaceAll("\"", "");
-            if ("join".equals(action)) {
-                String path = PARTICIPANTS_PATH.replace("{cid}", coordinationId);
-                response = given().contentType(JSON).body("{\"name\":\"" + name + "\"}").post(path);
-            }
+            coordinationLocation = given().contentType(JSON)
+                    .body("{\"business_key\":\"myBK\"}")
+                    .post(COORDINATIONS_PATH)
+                    .header("Location");
         });
 
         When("I {string} the participant {string} with {string} state", (String action, String name, String state) -> {
-            String coordinationId = response.header("ETag").replaceAll("\"", "");
             if ("join".equals(action)) {
-                String path = PARTICIPANTS_PATH.replace("{cid}", coordinationId);
                 String stateJsonPart = "";
                 if (state != null && !"".equals(state.trim())) {
                     stateJsonPart = ", \"state\":\"" + state + "\"";
                 }
-                response = given().contentType(JSON).body("{\"name\":\"" + name + "\"" + stateJsonPart + "}").post(path);
-            }
+                response = given()
+                        .contentType(JSON)
+                        .body("{\"name\":\"" + name + "\"" + stateJsonPart + "}")
+                        .post(coordinationLocation.concat("/participants"));
 
+                pNameAndLocation.put(name, response.header("Location"));
+
+            } else if("update".equals(action)) {
+                String location = pNameAndLocation.get(name);
+                String stateJsonPart = "";
+                if (state != null && !"".equals(state.trim())) {
+                    stateJsonPart = ", \"state\":\"" + state + "\"";
+                }
+
+                response = given()
+                        .contentType(JSON)
+                        .body("{\"name\":\"" + name + "\"" + stateJsonPart + "}")
+                        .put(location);
+
+            }
         });
 
         Then("the participant has the {string} state", (String state) -> {
+            response.then().body("state", equalTo(state));
+        });
+
+        Then("the coordination has {int} participants in {string} state", (Integer size, String state) -> {
+            response = given().contentType(JSON).get(coordinationLocation + "/participants");
+            response.then().body("size()", equalTo(size));
             response.then().body("state", hasItems(state));
         });
 
+        When("I end the coordination", () -> {
+            response = given().contentType(JSON).put(coordinationLocation);
+        });
     }
 }

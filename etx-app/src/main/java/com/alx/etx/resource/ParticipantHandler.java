@@ -1,5 +1,6 @@
 package com.alx.etx.resource;
 
+import com.alx.etx.data.Coordination;
 import com.alx.etx.data.Participant;
 import com.alx.etx.model.ParticipantData;
 import com.alx.etx.service.CoordinationService;
@@ -12,6 +13,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
 
 import java.net.URI;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.alx.etx.data.ParticipantState.JOINED;
 import static com.alx.etx.resource.API.PARTICIPANTS_PATH;
@@ -28,38 +32,52 @@ public class ParticipantHandler {
     private CoordinationService service;
 
     public Mono<ServerResponse> get(ServerRequest request) {
-        return null;
+        String cid = request.pathVariable("cid");
+        return service.get(cid)
+                .map(Coordination::getParticipants)
+                .flatMap(this::getResponse);
     }
 
     public Mono<ServerResponse> getById(ServerRequest request) {
-        return null;
+        String cid = request.pathVariable("cid");
+        String pid = request.pathVariable("id");
+        return service.get(cid)
+                .map(c -> c.getParticipants().get(pid))
+                .flatMap(this::getResponse);
     }
 
     public Mono<ServerResponse> join(ServerRequest request) {
         final String cid = request.pathVariable("cid");
         return bodyToParticipant(request)
-                .flatMap( p -> {
-                    Mono<Participant> mono = service.join(cid, p);
-                    System.out.println("mono = " + mono);
-                    return mono;
-                })
+                .flatMap( p -> service.join(cid, p))
                 .doOnError( e -> logger.error("Exception while joining participant", e))
                 .doOnSuccess( p -> logger.info("Successfully created participant with ID {}", p.getId()))
-                .flatMap( p -> createResponse(cid, p));
+                .flatMap( p -> createResponse(cid, p.getId()));
     }
 
     public Mono<ServerResponse> update(ServerRequest request) {
-        return null;
+        final String cid = request.pathVariable("cid");
+        final String pid = request.pathVariable("id");
+        return bodyToParticipant(request)
+                .flatMap( p -> service.changeState(cid, pid, p.getState()))
+                .doOnError( e -> logger.error("Exception while changing the participant state", e))
+                .doOnSuccess( p -> logger.info("Successfully changed the participant to {}", p.name()))
+                .flatMap( p -> createResponse(cid, pid));
+
     }
 
-    private Mono<ServerResponse> createResponse(String coordId, Participant p) {
-        URI location = UriComponentsBuilder.fromPath(PARTICIPANTS_PATH.concat("/{id}")).buildAndExpand(coordId, p.getId()).toUri();
-        return created(location).eTag(p.getId()).build();
+    private Mono<ServerResponse> createResponse(String coordId, String pid) {
+        URI location = UriComponentsBuilder.fromPath(PARTICIPANTS_PATH.concat("/{id}")).buildAndExpand(coordId, pid).toUri();
+        return created(location).build();
     }
-
 
     private Mono<ServerResponse> getResponse(Participant p) {
-        return ok().eTag(p.getId()).contentType(APPLICATION_JSON).syncBody(toParticipantData(p));
+        return ok().contentType(APPLICATION_JSON).syncBody(toParticipantData(p));
+    }
+
+    private Mono<ServerResponse> getResponse(Map<String, Participant> map) {
+        List<ParticipantData> list = map.values().stream().map(this::toParticipantData).collect(Collectors.toList());
+        return ok().contentType(APPLICATION_JSON).syncBody(list);
     }
 
     private Mono<Participant> bodyToParticipant(ServerRequest request) {
@@ -82,6 +100,7 @@ public class ParticipantHandler {
         data.setExecuteTime(p.getConfirmTime());
         data.setJoinTime(p.getJoinTime());
         data.setName(p.getName());
+        data.setState(p.getState());
         data.setId(p.getId());
         return data;
     }
