@@ -7,7 +7,6 @@ import com.alx.etx.model.CoordinationData;
 import com.alx.etx.service.CoordinationService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jdk.nashorn.internal.ir.debug.JSONWriter;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -66,11 +65,11 @@ public class CoordinationHandler {
     }
 
     private CoordinationConfiguration createConfiguration(CoordinationConfigData dto) {
-        CoordinationConfiguration config = new CoordinationConfiguration();
+        var config = new CoordinationConfiguration();
         config.setApplicationId(dto.getApplicationId());
         config.setBusinessKey(dto.getBusinessKey());
-        Integer timeout = dto.getTimeout();
-        ChronoUnit unit = dto.getTimeoutUnit();
+        var timeout = dto.getTimeout();
+        var unit = dto.getTimeoutUnit();
         if (timeout != null && unit != null) {
             config.setTimeout((long)timeout);
             config.setTimeoutUnit(unit);
@@ -79,7 +78,7 @@ public class CoordinationHandler {
     }
 
     private Mono<ServerResponse> createdResponse(Coordination c) {
-        URI location = UriComponentsBuilder.fromPath(COORDINATIONS_ID_PATH).buildAndExpand(c.getId()).toUri();
+        var location = UriComponentsBuilder.fromPath(COORDINATIONS_ID_PATH).buildAndExpand(c.getId()).toUri();
         return created(location).eTag(c.getId()).contentType(APPLICATION_JSON).syncBody(toCoordinationData(c));
     }
 
@@ -92,7 +91,7 @@ public class CoordinationHandler {
     }
 
     private CoordinationData toCoordinationData(Coordination c) {
-        CoordinationData data = new CoordinationData();
+        var data = new CoordinationData();
         data.setId(c.getId());
         data.setApplicationId(c.getApplicationId());
         data.setBusinessKey(c.getBusinessKey());

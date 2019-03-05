@@ -4,7 +4,6 @@ import com.alx.etx.data.Participant;
 import com.alx.etx.data.ParticipantState;
 import com.alx.etx.service.exception.CoordinationException;
 import com.alx.etx.service.exception.InvalidParticipantStateException;
-import sun.security.krb5.internal.PAData;
 
 import java.time.OffsetDateTime;
 

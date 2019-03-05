@@ -1,5 +1,5 @@
-/Users/alemser/Projects/Alemser/etx/etx-client/src/main/java/com/alx/etx/client/CoordinationContext.java
-/Users/alemser/Projects/Alemser/etx/etx-client/src/main/java/com/alx/etx/client/IncomingHeaders.java
-/Users/alemser/Projects/Alemser/etx/etx-client/src/main/java/com/alx/etx/client/CoordExchangeFunction.java
-/Users/alemser/Projects/Alemser/etx/etx-client/src/main/java/com/alx/etx/client/CoordExchangeService.java
-/Users/alemser/Projects/Alemser/etx/etx-client/src/main/java/com/alx/etx/client/Participant.java
+/home/ubuntu/workspace/etx-client/src/main/java/com/alx/etx/client/CoordinationContext.java
+/home/ubuntu/workspace/etx-client/src/main/java/com/alx/etx/client/Participant.java
+/home/ubuntu/workspace/etx-client/src/main/java/com/alx/etx/client/IncomingHeaders.java
+/home/ubuntu/workspace/etx-client/src/main/java/com/alx/etx/client/CoordExchangeFunction.java
+/home/ubuntu/workspace/etx-client/src/main/java/com/alx/etx/client/CoordExchangeService.java

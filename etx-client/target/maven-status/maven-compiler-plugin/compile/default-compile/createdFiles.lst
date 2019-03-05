@@ -1,6 +1,6 @@
 com/alx/etx/client/Participant.class
 com/alx/etx/client/CoordExchangeService.class
 com/alx/etx/client/CoordExchangeFunction$CoordExchangeServiceImpl.class
-com/alx/etx/client/CoordExchangeFunction.class
 com/alx/etx/client/CoordinationContext.class
 com/alx/etx/client/IncomingHeaders.class
+com/alx/etx/client/CoordExchangeFunction.class
