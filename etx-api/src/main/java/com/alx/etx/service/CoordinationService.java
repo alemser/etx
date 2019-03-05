@@ -3,6 +3,7 @@ package com.alx.etx.service;
 import com.alx.etx.data.Coordination;
 import com.alx.etx.data.CoordinationConfiguration;
 import com.alx.etx.data.Participant;
+import com.alx.etx.data.ParticipantState;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -40,12 +41,22 @@ public interface CoordinationService {
 	Mono<Coordination> end(String coordinationId);
 
 	/**
+	 * Change the state of a participant of a given coordination to a desired state.
+	 * @param coordinationId The id of the coordination.
+	 * @param participantId The id of the participant.
+	 * @param desiredState The desired state.
+	 *
+	 * @return true if the state change is successful.
+	 */
+	Mono<ParticipantState> changeState(String coordinationId, String participantId, ParticipantState desiredState);
+
+	/**
 	 * Change the participant state in the coordination to execute.
 	 *
 	 * @param coordinationId the coordination id.
 	 * @param participantId the participant id.
 	 */
-	Mono<Void> execute(String coordinationId, String participantId);
+	Mono<ParticipantState> execute(String coordinationId, String participantId);
 
 	/**
 	 * Change the participant state in the coordination to confirm.
@@ -53,7 +64,7 @@ public interface CoordinationService {
 	 * @param coordinationId the coordination id.
 	 * @param participantId the participant id.
 	 */
-	Mono<Void> confirm(String coordinationId, String participantId);
+	Mono<ParticipantState> confirm(String coordinationId, String participantId);
 
 	/**
 	 * Change the participant state in the coordination to cancelled.
@@ -61,7 +72,7 @@ public interface CoordinationService {
 	 * @param coordinationId the coordination id.
 	 * @param participantId the participant id.
 	 */
-	Mono<Void> cancel(String coordinationId, String participantId);
+	Mono<ParticipantState> cancel(String coordinationId, String participantId);
 
 	/**
 	 * Returns a coordination by id.
