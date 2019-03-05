@@ -1,53 +1,29 @@
 package com.alx.etx.test.coordination;
 
-import com.alx.etx.Application;
-import com.alx.etx.EtxConfiguration;
-import com.alx.etx.data.Coordination;
-import com.alx.etx.data.CoordinationConfiguration;
-import com.alx.etx.data.Participant;
-import com.alx.etx.model.ParticipantStateListener;
-import com.alx.etx.service.CoordinationCheckTask;
-import com.alx.etx.service.CoordinationService;
-import com.alx.etx.service.CoordinationServiceImpl;
-import cucumber.api.Scenario;
-import cucumber.api.java.Before;
 import cucumber.api.java8.En;
-import io.cucumber.datatable.DataTable;
-import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.test.context.ContextConfiguration;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
+import java.util.HashMap;
+import java.util.Map;
 
+import static com.alx.etx.data.CoordinationState.ENDED;
 import static com.alx.etx.resource.API.COORDINATIONS_PATH;
+import static com.alx.etx.resource.API.PARTICIPANTS_PATH;
 import static io.restassured.RestAssured.given;
 import static io.restassured.http.ContentType.JSON;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 
-@SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ContextConfiguration(classes = {CoordinationServiceImpl.class, EtxConfiguration.class,
-        ParticipantStateListener.class, CoordinationCheckTask.class})
 public class CoordinationResourceSteps implements En {
-
-    @LocalServerPort
-    private int randomServerPort;
 
     private RequestSpecification requestSpecification;
     private Response response;
+    private String coordinationLocation;
+    private Map<String, String> pNameAndLocation = new HashMap<>();
 
     public CoordinationResourceSteps() {
         Given("the following payload", (io.cucumber.datatable.DataTable dataTable) -> {
@@ -98,12 +74,54 @@ public class CoordinationResourceSteps implements En {
             response.then().body("size()", equalTo(1));
             response.then().body("business_key", hasItems(businesskey));
         });
-    }
 
-    @Before
-    public void setUp(Scenario scenario) {
-        RestAssured.port = randomServerPort;
-        RestAssured.baseURI = "http://localhost";
+        Given("a started coordination", () -> {
+            coordinationLocation = given().contentType(JSON)
+                    .body("{\"business_key\":\"myBK\"}")
+                    .post(COORDINATIONS_PATH)
+                    .header("Location");
+        });
 
+        When("I {string} the participant {string} with {string} state", (String action, String name, String state) -> {
+            if ("join".equals(action)) {
+                String stateJsonPart = "";
+                if (state != null && !"".equals(state.trim())) {
+                    stateJsonPart = ", \"state\":\"" + state + "\"";
+                }
+                response = given()
+                        .contentType(JSON)
+                        .body("{\"name\":\"" + name + "\"" + stateJsonPart + "}")
+                        .post(coordinationLocation.concat("/participants"));
+
+                pNameAndLocation.put(name, response.header("Location"));
+
+            } else if("update".equals(action)) {
+                String location = pNameAndLocation.get(name);
+                String stateJsonPart = "";
+                if (state != null && !"".equals(state.trim())) {
+                    stateJsonPart = ", \"state\":\"" + state + "\"";
+                }
+
+                response = given()
+                        .contentType(JSON)
+                        .body("{\"name\":\"" + name + "\"" + stateJsonPart + "}")
+                        .put(location);
+
+            }
+        });
+
+        Then("the participant has the {string} state", (String state) -> {
+            response.then().body("state", equalTo(state));
+        });
+
+        Then("the coordination has {int} participants in {string} state", (Integer size, String state) -> {
+            response = given().contentType(JSON).get(coordinationLocation + "/participants");
+            response.then().body("size()", equalTo(size));
+            response.then().body("state", hasItems(state));
+        });
+
+        When("I end the coordination", () -> {
+            response = given().contentType(JSON).put(coordinationLocation);
+        });
     }
 }

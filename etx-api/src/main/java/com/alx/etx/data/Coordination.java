@@ -11,6 +11,7 @@ import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 public @Data class Coordination implements Serializable {
 
@@ -34,7 +35,7 @@ public @Data class Coordination implements Serializable {
 
 	private CoordinationState state;
 
-	private Map<String, Participant> participants = new HashMap<>();
+	private Map<String, Participant> participants = new TreeMap<>();
 
 	public Coordination() {
 		this.createTime = now();
