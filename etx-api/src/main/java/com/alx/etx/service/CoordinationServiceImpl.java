@@ -43,8 +43,8 @@ public class CoordinationServiceImpl implements CoordinationService {
 	@Override
 	public Mono<Coordination> start(CoordinationConfiguration configuration) {
 	    return Mono.fromSupplier( () -> {
-	        Coordination coord = new CoordinationEntity().start();
-	        OffsetDateTime timeout = coord.getStartTime().plus(configuration.getTimeout(), configuration.getTimeoutUnit());
+	        var coord = new CoordinationEntity().start();
+	        var timeout = coord.getStartTime().plus(configuration.getTimeout(), configuration.getTimeoutUnit());
 	        coord.setTimeout(timeout);
 	        coord.setBusinessKey(configuration.getBusinessKey());
 	        coord.setApplicationId(configuration.getApplicationId());
@@ -111,9 +111,9 @@ public class CoordinationServiceImpl implements CoordinationService {
 
 	private Mono<ParticipantState> changeParticipantState(String coordinationId, String participantId, ParticipantState state) {
 		return get(coordinationId).map( coord -> {
-            Map<String, Participant> participants = coord.getParticipants();
-            Participant participant = participants.get(participantId);
-            ParticipantState previousState = participant.getState();
+            var participants = coord.getParticipants();
+            var participant = participants.get(participantId);
+            var previousState = participant.getState();
 			participant.updateState(state);
 			applicationEventPublisher.publishEvent(new ParticipantEvent(participant, coord));
 			logger.info("Participant {} state changed from {} to {}", participant.getId(), previousState, participant.getState());

@@ -4,7 +4,6 @@ import com.alx.etx.data.Coordination;
 import com.alx.etx.data.CoordinationConfiguration;
 import com.alx.etx.data.Participant;
 import com.alx.etx.data.ParticipantState;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 

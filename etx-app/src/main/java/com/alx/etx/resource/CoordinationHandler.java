@@ -13,8 +13,6 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
 
-import java.net.URI;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import static com.alx.etx.resource.API.COORDINATIONS_PATH;
@@ -65,11 +63,11 @@ public class CoordinationHandler {
     }
 
     private CoordinationConfiguration createConfiguration(CoordinationConfigData dto) {
-        CoordinationConfiguration config = new CoordinationConfiguration();
+        var config = new CoordinationConfiguration();
         config.setApplicationId(dto.getApplicationId());
         config.setBusinessKey(dto.getBusinessKey());
-        Integer timeout = dto.getTimeout();
-        ChronoUnit unit = dto.getTimeoutUnit();
+        var timeout = dto.getTimeout();
+        var unit = dto.getTimeoutUnit();
         if (timeout != null && unit != null) {
             config.setTimeout((long)timeout);
             config.setTimeoutUnit(unit);
@@ -78,8 +76,8 @@ public class CoordinationHandler {
     }
 
     private Mono<ServerResponse> createdResponse(Coordination c) {
-        URI location = UriComponentsBuilder.fromPath(COORDINATIONS_PATH.concat("/{id}")).buildAndExpand(c.getId()).toUri();
-        return created(location).contentType(APPLICATION_JSON).syncBody(toCoordinationData(c));
+        var location = UriComponentsBuilder.fromPath(COORDINATIONS_PATH.concat("/{id}")).buildAndExpand(c.getId()).toUri();
+        return created(location).eTag(c.getId()).contentType(APPLICATION_JSON).syncBody(toCoordinationData(c));
     }
 
     private Mono<ServerResponse> getResponse(Coordination c) {
@@ -91,7 +89,7 @@ public class CoordinationHandler {
     }
 
     private CoordinationData toCoordinationData(Coordination c) {
-        CoordinationData data = new CoordinationData();
+        var data = new CoordinationData();
         data.setId(c.getId());
         data.setApplicationId(c.getApplicationId());
         data.setBusinessKey(c.getBusinessKey());
