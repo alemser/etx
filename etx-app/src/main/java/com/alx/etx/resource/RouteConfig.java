@@ -5,8 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.server.RouterFunction;
 
-import static com.alx.etx.resource.API.COORDINATIONS_PATH;
-import static com.alx.etx.resource.API.PARTICIPANTS_PATH;
+import static com.alx.etx.resource.API.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.web.reactive.function.server.RequestPredicates.accept;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
@@ -25,10 +24,10 @@ public class RouteConfig {
         return route()
                 .path(COORDINATIONS_PATH, c -> c
                         .nest(accept(APPLICATION_JSON), c2 -> c2
-                                .GET("", coordinationHandler::get)
-                                .GET("/{id}", coordinationHandler::getById)
-                                .POST("", coordinationHandler::create)
-                                .PUT("/{id}", coordinationHandler::update))).build();
+                                .GET(BLANK_PATH, coordinationHandler::get)
+                                .GET(ID_PATH, coordinationHandler::getById)
+                                .POST(BLANK_PATH, coordinationHandler::create)
+                                .PUT(ID_PATH, coordinationHandler::update))).build();
     }
 
     @Bean
@@ -36,10 +35,9 @@ public class RouteConfig {
         return route()
                 .path(PARTICIPANTS_PATH, c -> c
                         .nest(accept(APPLICATION_JSON), c2 -> c2
-                                .GET("", participantHandler::get)
-                                .GET("/{id}", participantHandler::getById)
-                                .POST("", participantHandler::join)
-                                .PUT("/{id}", participantHandler::update))).build();
+                                .GET(BLANK_PATH, participantHandler::get)
+                                .GET(ID_PATH, participantHandler::getById)
+                                .POST(BLANK_PATH, participantHandler::join)
+                                .PUT(ID_PATH, participantHandler::update))).build();
     }
-
 }
