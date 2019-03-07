@@ -57,3 +57,16 @@ Feature: Handle coordination requests
     When I end the coordination
     Then the response status code is 200
     And the coordination state is "ENDED"
+
+  Scenario: Confirming participants of a coordination
+    Given a started coordination
+    When I "join" the participant "HotelService" with "EXECUTED" state
+    And I "join" the participant "CarService" with "EXECUTED" state
+    And I "join" the participant "DinnerService" with "EXECUTED" state
+    Then the coordination has 3 participants in "EXECUTED" state
+    When I "update" the participant "HotelService" with "CONFIRMED" state
+    And I "update" the participant "CarService" with "CONFIRMED" state
+    Then the coordination has 2 participants in "CONFIRMED" state
+    When I end the coordination
+    Then the response status code is 200
+    And the coordination state is "INCONSISTENT"
