@@ -1,17 +1,20 @@
 package com.alx.etx.test.coordination;
 
+import com.alx.etx.model.CoordinationConfigData;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import cucumber.api.java8.En;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.alx.etx.data.CoordinationState.ENDED;
 import static com.alx.etx.resource.API.COORDINATIONS_PATH;
-import static com.alx.etx.resource.API.PARTICIPANTS_PATH;
 import static io.restassured.RestAssured.given;
 import static io.restassured.http.ContentType.JSON;
+import static java.lang.Thread.sleep;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.not;
@@ -20,12 +23,26 @@ import static org.junit.Assert.assertThat;
 
 public class CoordinationResourceSteps implements En {
 
+    @Autowired
+    private ObjectMapper mapper;
+
     private RequestSpecification requestSpecification;
     private Response response;
     private String coordinationLocation;
+    private CoordinationConfigData config;
     private Map<String, String> pNameAndLocation = new HashMap<>();
 
     public CoordinationResourceSteps() {
+        Given("a configuration with {int} seconds timeout", (Integer timeout) -> {
+            config = new CoordinationConfigData();
+            config.setTimeout(timeout);
+            config.setTimeoutUnit(ChronoUnit.SECONDS);
+        });
+
+        When("I wait for {int} seconds", (Integer timeout) -> {
+            sleep(timeout * 1000);
+        });
+
         Given("the following payload", (io.cucumber.datatable.DataTable dataTable) -> {
             String payload = dataTable.asList().get(0);
             requestSpecification = given()
@@ -76,8 +93,13 @@ public class CoordinationResourceSteps implements En {
         });
 
         Given("a started coordination", () -> {
+            if (config == null) {
+                config = new CoordinationConfigData();
+            }
+            config.setBusinessKey("myBK");
+            var json = mapper.writeValueAsString(config);
             coordinationLocation = given().contentType(JSON)
-                    .body("{\"business_key\":\"myBK\"}")
+                    .body(json)
                     .post(COORDINATIONS_PATH)
                     .header("Location");
         });
@@ -114,10 +136,10 @@ public class CoordinationResourceSteps implements En {
             response.then().body("state", equalTo(state));
         });
 
-        Then("the coordination has {int} participants in {string} state", (Integer size, String state) -> {
+        Then("the coordination has {int} participants with the following states", (Integer size, io.cucumber.datatable.DataTable dataTable) -> {
             response = given().contentType(JSON).get(coordinationLocation + "/participants");
             response.then().body("size()", equalTo(size));
-            response.then().body("state", hasItems(state));
+            response.then().body("state", hasItems(dataTable.asList().toArray()));
         });
 
         When("I end the coordination", () -> {

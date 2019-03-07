@@ -89,7 +89,7 @@ public class CoordinationServiceImpl implements CoordinationService {
             case CONFIRMED:
                 return confirm(coordinationId, participantId);
             case CANCELLED:
-                return confirm(coordinationId, participantId);
+                return cancel(coordinationId, participantId);
         }
         return Mono.error(new CoordinationException("Cannot change participant state."));
     }
