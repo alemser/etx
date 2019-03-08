@@ -106,29 +106,20 @@ public class CoordinationResourceSteps implements En {
 
         When("I {string} the participant {string} with {string} state", (String action, String name, String state) -> {
             if ("join".equals(action)) {
-                String stateJsonPart = "";
-                if (state != null && !"".equals(state.trim())) {
-                    stateJsonPart = ", \"state\":\"" + state + "\"";
-                }
+                var json = buildParticipantPayload(name, state);
                 response = given()
                         .contentType(JSON)
-                        .body("{\"name\":\"" + name + "\"" + stateJsonPart + "}")
+                        .body(json)
                         .post(coordinationLocation.concat("/participants"));
-
                 pNameAndLocation.put(name, response.header("Location"));
 
             } else if("update".equals(action)) {
-                String location = pNameAndLocation.get(name);
-                String stateJsonPart = "";
-                if (state != null && !"".equals(state.trim())) {
-                    stateJsonPart = ", \"state\":\"" + state + "\"";
-                }
-
+                var location = pNameAndLocation.get(name);
+                var json = buildParticipantPayload(name, state);
                 response = given()
                         .contentType(JSON)
-                        .body("{\"name\":\"" + name + "\"" + stateJsonPart + "}")
+                        .body(json)
                         .put(location);
-
             }
         });
 
@@ -145,5 +136,13 @@ public class CoordinationResourceSteps implements En {
         When("I end the coordination", () -> {
             response = given().contentType(JSON).put(coordinationLocation);
         });
+    }
+
+    private String buildParticipantPayload(String name, String state) {
+        var stateJsonPart = "";
+        if (state != null && !"".equals(state.trim())) {
+            stateJsonPart = ", \"state\":\"" + state + "\"";
+        }
+        return "{\"name\":\"" + name + "\"" + stateJsonPart + "}";
     }
 }

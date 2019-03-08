@@ -1,10 +1,13 @@
 package com.alx.etx.model;
 
 import com.alx.etx.data.ParticipantState;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Data;
 
 import java.time.OffsetDateTime;
 
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public @Data class ParticipantData {
     private String id;
     private String name;
