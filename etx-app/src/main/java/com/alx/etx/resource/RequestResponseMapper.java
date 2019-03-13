@@ -41,7 +41,7 @@ public class RequestResponseMapper {
 
     public Mono<ServerResponse> createdResponse(Coordination c) {
         var location = UriComponentsBuilder.fromPath(COORDINATIONS_PATH.concat(ID_PATH)).buildAndExpand(c.getId()).toUri();
-        return created(location).eTag(c.getId()).contentType(APPLICATION_JSON).syncBody(toCoordinationData(c));
+        return created(location).contentType(APPLICATION_JSON).syncBody(toCoordinationData(c));
     }
 
     public Mono<ServerResponse> getResponse(Coordination c) {
